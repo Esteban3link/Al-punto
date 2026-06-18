@@ -451,7 +451,65 @@ async function activarCheckoutReal() {
 comprar = function(nombre) {
     funcionComprarOriginal(nombre);
     activarCheckoutReal(); // Ahora genera un cobro de verdad cada vez que clickean
-}
+        // 1. Inicializamos Mercado Pago con tu CLAVE PÚBLICA REAL de producción
+    const mp = new MercadoPago('APP_USR-b4108a49-fe76-472c-8308-20688f95f9e7', {
+        locale: 'es-AR'
+    });
+
+    // 2. Función para renderizar el botón oficial de Mercado Pago
+    async function renderizarBotonPago(preferenceId) {
+        const bricksBuilder = mp.bricks();
+        
+        // Evitamos duplicar el botón si el usuario toca varias veces
+        const container = document.getElementById('walletBrick_container');
+        container.innerHTML = ''; 
+
+        await bricksBuilder.create("wallet", "walletBrick_container", {
+            initialization: {
+                preferenceId: preferenceId, // ID único que genera el servidor
+            },
+            customization: {
+                texts: {
+                    valueProp: 'smart_option' // Muestra la leyenda "Paga de forma segura"
+                }
+            }
+        });
+    }
+
+    // 3. Función REAL que viaja al servidor a buscar el pago seguro
+    async function activarCheckoutReal() {
+        const carrito = [
+            { title: "Tapas de Hojaldre Real", quantity: 1, unit_price: 2400 }
+        ];
+
+        try {
+            const response = await fetch('/api/create-preference', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ items: carrito })
+            });
+            
+            const data = await response.json();
+            
+            if (data.id) {
+                renderizarBotonPago(data.id);
+            } else {
+                alert("No se pudo iniciar el pago. Intentá de nuevo.");
+            }
+
+        } catch (error) {
+            console.error("Error de conexión con el servidor:", error);
+        }
+    }
+
+    // 4. INTERCEPTAMOS LA FUNCIÓN (Acá estaba el error: faltaba la línea de abajo)
+    const funcionComprarOriginal = comprar; 
+    comprar = function(nombre) {
+        funcionComprarOriginal(nombre); // Ahora sí va a sumar al carrito y mostrar el aviso visual
+        activarCheckoutReal();         // Y acá atrás arranca el motor de Mercado Pago
+                }
+    
+
 </script>
 </body>
 </html>
