@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
-<head><!-- SDK de Mercado Pago v2 -->
-<script src="https://sdk.mercadopago.com/js/v2"></script>
+<head>
+    <!-- SDK de Mercado Pago v2 -->
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Al Punto - Premium Store</title>
@@ -12,7 +13,7 @@
             --samsung-white: #ffffff;
             --samsung-gray-bg: #f7f7f7;
             --samsung-gray-text: #707070;
-            --samsung-blue: #1428a0; /* Azul institucional ocasional */
+            --samsung-blue: #1428a0; 
             --border-light: #dadada;
         }
 
@@ -48,7 +49,7 @@
             font-size: 1.5rem;
             font-weight: 700;
             letter-spacing: -0.5px;
-            text-transform: lowercase; /* Estilo muy tecnológico */
+            text-transform: lowercase;
             cursor: pointer;
         }
 
@@ -123,7 +124,7 @@
             color: var(--samsung-black);
             border: none;
             padding: 12px 30px;
-            border-radius: 30px; /* Botón tipo píldora */
+            border-radius: 30px;
             font-weight: 600;
             font-size: 0.95rem;
             cursor: pointer;
@@ -134,7 +135,7 @@
             opacity: 0.9;
         }
 
-        /* Selector de categorías flotante (Estilo Samsung) */
+        /* Selector de categorías flotante */
         .category-nav {
             display: flex;
             justify-content: center;
@@ -171,7 +172,7 @@
             background-color: var(--samsung-black);
         }
 
-        /* Grilla de productos minimalista */
+        /* Grilla de productos */
         .store-grid {
             max-width: 1440px;
             margin: 0 auto 5rem auto;
@@ -181,7 +182,7 @@
             gap: 1.5rem;
         }
 
-        /* Tarjeta de producto plana y limpia */
+        /* Tarjeta de producto */
         .product-card {
             background-color: var(--samsung-gray-bg);
             border-radius: 20px;
@@ -280,7 +281,7 @@
 </head>
 <body>
 
-    <!-- Menú Superior Estilo Tecnológico -->
+    <!-- Menú Superior -->
     <header>
         <div class="logo">al punto.</div>
         <nav class="nav-links">
@@ -293,7 +294,7 @@
         </button>
     </header>
 
-    <!-- Banner Principal de Impacto -->
+    <!-- Banner Principal -->
     <section class="hero-banner">
         <span style="color: var(--samsung-blue); font-weight: 700; font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;">Lanzamiento Exclusivo</span>
         <h1>Línea Signature</h1>
@@ -301,16 +302,15 @@
         <button class="hero-cta" onclick="document.getElementById('store-section').scrollIntoView({behavior: 'smooth'})">Ver modelos</button>
     </section>
 
-    <!-- Pestañas de Navegación del Catálogo -->
+    <!-- Filtros -->
     <div class="category-nav" id="store-section">
         <button class="category-tab active" onclick="filtrar('todos', this)">Todos</button>
         <button class="category-tab" onclick="filtrar('pastas', this)">Pastas Italianas</button>
         <button class="category-tab" onclick="filtrar('panificados', this)">Panificados</button>
     </div>
 
-    <!-- Grilla de Productos -->
+    <!-- Catálogo -->
     <main class="store-grid">
-        
         <!-- Producto 1 -->
         <article class="product-card" data-category="panificados">
             <span class="product-badge">Más vendido</span>
@@ -340,20 +340,19 @@
             <div class="price">$2.400</div>
             <button class="btn-buy" onclick="comprar('Tapas de Hojaldre Real')">Comprar</button>
         </article>
-<!-- Sección de Pago Estilo Premium -->
-<div id="seccion-pago" style="max-width: 450px; margin: 4rem auto; padding: 2.5rem; text-align: center; background-color: var(--samsung-gray-bg); border-radius: 20px;">
-    <h3 style="margin-top: 0; font-size: 1.5rem;">Resumen de Orden</h3>
-    <p style="color: var(--samsung-gray-text); font-size: 0.95rem; margin-bottom: 2rem;">
-        Paga de forma 100% segura con tarjetas o dinero en cuenta a través de Mercado Pago.
-    </p>
-    
-    <!-- Acá adentro Mercado Pago va a dibujar el botón real -->
-    <div id="walletBrick_container"></div> 
-</div>
+
+        <!-- Sección de Pago -->
+        <div id="seccion-pago" style="grid-column: 1 / -1; max-width: 450px; margin: 3rem auto; padding: 2.5rem; text-align: center; background-color: var(--samsung-gray-bg); border-radius: 20px; width: 100%;">
+            <h3 style="margin-top: 0; font-size: 1.5rem;">Resumen de Orden</h3>
+            <p style="color: var(--samsung-gray-text); font-size: 0.95rem; margin-bottom: 2rem;">
+                Paga de forma 100% segura a través de Mercado Pago.
+            </p>
+            <div id="walletBrick_container"></div> 
+        </div>
     </main>
 
-    <!-- Notificación flotante superior -->
-    <div id="toast">Agregado al ecosistema de compra</div>
+    <!-- Notificación flotante -->
+    <div id="toast">Agregado al carrito</div>
 
     <!-- Lógica de la Tienda -->
     <script>
@@ -362,26 +361,21 @@
         const toast = document.getElementById('toast');
         let toastTimer;
 
-        function comprar(nombre) {
-            items++;
-            countBadge.textContent = items;
-            
-            toast.innerHTML = `🛒 Se añadió <strong>${nombre}</strong> al carrito.`;
-            toast.classList.add('visible');
-
-            clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => {
-                toast.classList.remove('visible');
-            }, 2500);
+        // Inicializar Mercado Pago de forma segura
+        let mp;
+        try {
+            mp = new MercadoPago('APP_USR-b4108a49-fe76-472c-8308-20688f95f9e7', {
+                locale: 'es-AR'
+            });
+        } catch (e) {
+            console.error("Error al cargar SDK de Mercado Pago:", e);
         }
 
         // Sistema dinámico de pestañas (Filtro)
         function filtrar(categoria, elementoBotón) {
-            // Cambiar pestaña activa
             document.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
             elementoBotón.classList.add('active');
 
-            // Filtrar las tarjetas
             document.querySelectorAll('.product-card').forEach(card => {
                 if(categoria === 'todos' || card.getAttribute('data-category') === categoria) {
                     card.style.display = 'flex';
@@ -390,126 +384,79 @@
                 }
             });
         }
-    // 1. Inicializamos Mercado Pago con una clave pública de prueba
-// Podés dejar esta para ver cómo se comporta el diseño
-const mp = new MercadoPago('TEST-40714856-bb6b-4e67-8549-354972f09d85', {
-    locale: 'es-AR'
-});
 
-// 2. Función para renderizar el botón oficial de Mercado Pago
-async function renderizarBotonPago(preferenceId) {
-    const bricksBuilder = mp.bricks();
-    
-    // Evitamos duplicar el botón si el usuario toca varias veces
-    const container = document.getElementById('walletBrick_container');
-    container.innerHTML = ''; 
+        // Renderizar el botón oficial de Mercado Pago
+        async function renderizarBotonPago(preferenceId) {
+            if (!mp) return;
+            try {
+                const bricksBuilder = mp.bricks();
+                const container = document.getElementById('walletBrick_container');
+                container.innerHTML = ''; 
 
-    await bricksBuilder.create("wallet", "walletBrick_container", {
-        initialization: {
-            preferenceId: preferenceId, // ID único que genera el servidor
-        },
-        customization: {
-            texts: {
-                valueProp: 'smart_option' // Muestra la leyenda "Paga de forma segura"
+                await bricksBuilder.create("wallet", "walletBrick_container", {
+                    initialization: {
+                        preferenceId: preferenceId,
+                    },
+                    customization: {
+                        texts: {
+                            valueProp: 'smart_option'
+                        }
+                    }
+                });
+            } catch (err) {
+                console.error("Error al crear el botón de pago:", err);
             }
         }
-    });
-}
 
-// Esta función ahora es REAL y busca un ID único para cada compra
-async function activarCheckoutReal() {
-    // 1. Armamos el carrito con lo que el usuario seleccionó
-    // (Ejemplo con un producto, pero acá iría tu lista de productos agregados)
-    const carrito = [
-        { title: "Prepizzas Neolíticas", quantity: 1, unit_price: 4200 }
-    ];
+        // Conexión con el servidor backend en Vercel
+        async function activarCheckoutReal(nombreProducto) {
+            // Definimos el precio según el producto seleccionado
+            let precio = 4200;
+            if (nombreProducto === 'Ravioloni Di Agnello') precio = 6800;
+            if (nombreProducto === 'Tapas de Hojaldre Real') precio = 2400;
 
-    try {
-        // 2. Hacemos el puente hacia nuestro servidor backend
-        // Al usar '/api/create-preference', la web le habla en secreto al servidor
-        const response = await fetch('/api/create-preference', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ items: carrito })
-        });
-        
-        const data = await response.json();
-        
-        // 3. Si el servidor nos dio el ID, dibujamos el botón oficial de Mercado Pago
-        if (data.id) {
-            renderizarBotonPago(data.id);
-        } else {
-            alert("No se pudo iniciar el pago. Intentá de nuevo.");
-        }
+            const carrito = [
+                { title: nombreProducto, quantity: 1, unit_price: precio }
+            ];
 
-    } catch (error) {
-        console.error("Error de conexión con el servidor:", error);
-    }
-}
-
-// Reemplazamos la simulación por la función real
-comprar = function(nombre) {
-    funcionComprarOriginal(nombre);
-    activarCheckoutReal(); // Ahora genera un cobro de verdad cada vez que clickean
-        // 1. Inicializamos Mercado Pago con tu CLAVE PÚBLICA REAL de producción
-    const mp = new MercadoPago('APP_USR-b4108a49-fe76-472c-8308-20688f95f9e7', {
-        locale: 'es-AR'
-    });
-
-    // 2. Función para renderizar el botón oficial de Mercado Pago
-    async function renderizarBotonPago(preferenceId) {
-        const bricksBuilder = mp.bricks();
-        
-        // Evitamos duplicar el botón si el usuario toca varias veces
-        const container = document.getElementById('walletBrick_container');
-        container.innerHTML = ''; 
-
-        await bricksBuilder.create("wallet", "walletBrick_container", {
-            initialization: {
-                preferenceId: preferenceId, // ID único que genera el servidor
-            },
-            customization: {
-                texts: {
-                    valueProp: 'smart_option' // Muestra la leyenda "Paga de forma segura"
+            try {
+                const response = await fetch('/api/create-preference', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ items: carrito })
+                });
+                
+                const data = await response.json();
+                
+                if (data.id) {
+                    renderizarBotonPago(data.id);
+                    // Hacemos scroll suave hasta el botón de pago para que el cliente lo vea
+                    document.getElementById('seccion-pago').scrollIntoView({behavior: 'smooth'});
+                } else {
+                    alert("No se pudo conectar con Mercado Pago. Revisá las configuraciones.");
                 }
+            } catch (error) {
+                console.error("Error de red:", error);
             }
-        });
-    }
-
-    // 3. Función REAL que viaja al servidor a buscar el pago seguro
-    async function activarCheckoutReal() {
-        const carrito = [
-            { title: "Tapas de Hojaldre Real", quantity: 1, unit_price: 2400 }
-        ];
-
-        try {
-            const response = await fetch('/api/create-preference', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ items: carrito })
-            });
-            
-            const data = await response.json();
-            
-            if (data.id) {
-                renderizarBotonPago(data.id);
-            } else {
-                alert("No se pudo iniciar el pago. Intentá de nuevo.");
-            }
-
-        } catch (error) {
-            console.error("Error de conexión con el servidor:", error);
         }
-    }
 
-    // 4. INTERCEPTAMOS LA FUNCIÓN (Acá estaba el error: faltaba la línea de abajo)
-    const funcionComprarOriginal = comprar; 
-    comprar = function(nombre) {
-        funcionComprarOriginal(nombre); // Ahora sí va a sumar al carrito y mostrar el aviso visual
-        activarCheckoutReal();         // Y acá atrás arranca el motor de Mercado Pago
-                }
-    
+        // Función que se activa al tocar "Comprar"
+        function comprar(nombre) {
+            items++;
+            if (countBadge) countBadge.textContent = items;
+            
+            if (toast) {
+                toast.innerHTML = `🛒 Se añadió <strong>${nombre}</strong> al carrito.`;
+                toast.classList.add('visible');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => {
+                    toast.classList.remove('visible');
+                }, 2500);
+            }
 
-</script>
+            // Corre el proceso de pago en segundo plano
+            activarCheckoutReal(nombre);
+        }
+    </script>
 </body>
 </html>
