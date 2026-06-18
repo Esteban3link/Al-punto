@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><!-- SDK de Mercado Pago v2 -->
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al Punto - Premium Store</title>
+    <style>
+        /* Paleta de colores inspirada en Samsung (Alto contraste y minimalismo) */
+        :root {
+            --samsung-black: #000000;
+            --samsung-white: #ffffff;
+            --samsung-gray-bg: #f7f7f7;
+            --samsung-gray-text: #707070;
+            --samsung-blue: #1428a0; /* Azul institucional ocasional */
+            --border-light: #dadada;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--samsung-white);
+            color: var(--samsung-black);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Barra de navegación ultralimpia */
+        header {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0 5%;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            text-transform: lowercase; /* Estilo muy tecnológico */
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--samsung-black);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--samsung-gray-text);
+        }
+
+        .carrito-btn {
+            background: none;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .cart-badge {
+            background-color: var(--samsung-black);
+            color: var(--samsung-white);
+            font-size: 0.75rem;
+            padding: 2px 7px;
+            border-radius: 10px;
+        }
+
+        /* Banner Principal Interactivo (Hero Banner) */
+        .hero-banner {
+            width: 100%;
+            height: 75vh;
+            background-color: var(--samsung-black);
+            color: var(--samsung-white);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin: 0 0 1rem 0;
+            letter-spacing: -1px;
+        }
+
+        .hero-banner p {
+            font-size: 1.25rem;
+            color: #86868b;
+            margin: 0 0 2rem 0;
+            max-width: 600px;
+        }
+
+        .hero-cta {
+            background-color: var(--samsung-white);
+            color: var(--samsung-black);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px; /* Botón tipo píldora */
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .hero-cta:hover {
+            opacity: 0.9;
+        }
+
+        /* Selector de categorías flotante (Estilo Samsung) */
+        .category-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 3rem auto 1.5rem auto;
+            max-width: 800px;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 10px;
+        }
+
+        .category-tab {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            color: var(--samsung-gray-text);
+            cursor: pointer;
+            padding: 5px 10px;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .category-tab.active {
+            color: var(--samsung-black);
+            font-weight: 700;
+        }
+
+        .category-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -11px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--samsung-black);
+        }
+
+        /* Grilla de productos minimalista */
+        .store-grid {
+            max-width: 1440px;
+            margin: 0 auto 5rem auto;
+            padding: 0 4%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Tarjeta de producto plana y limpia */
+        .product-card {
+            background-color: var(--samsung-gray-bg);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .product-card:hover {
+            background-color: #ededed;
+        }
+
+        .product-image-box {
+            width: 100%;
+            height: 220px;
+            background-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            margin-bottom: 2rem;
+        }
+
+        .product-badge {
+            background-color: var(--samsung-black);
+            color: var(--samsung-white);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .product-card h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+
+        .product-card .specs {
+            color: var(--samsung-gray-text);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            height: 40px;
+        }
+
+        .product-card .price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-buy {
+            background-color: var(--samsung-black);
+            color: var(--samsung-white);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            width: 100%;
+            max-width: 200px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-buy:hover {
+            background-color: #333333;
+        }
+
+        /* Notificación Minimalista */
+        #toast {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            background-color: var(--samsung-black);
+            color: var(--samsung-white);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateX(150%);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 2000;
+        }
+
+        #toast.visible {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Menú Superior Estilo Tecnológico -->
+    <header>
+        <div class="logo">al punto.</div>
+        <nav class="nav-links">
+            <a href="#">Inicio</a>
+            <a href="#">Destacados</a>
+            <a href="#">Combos</a>
+        </nav>
+        <button class="carrito-btn">
+            Carrito <span class="cart-badge" id="cart-count">0</span>
+        </button>
+    </header>
+
+    <!-- Banner Principal de Impacto -->
+    <section class="hero-banner">
+        <span style="color: var(--samsung-blue); font-weight: 700; font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;">Lanzamiento Exclusivo</span>
+        <h1>Línea Signature</h1>
+        <p>Edición ultra premium de pastas artesanales y panificados listos para hornear. Elevá tus comidas diarias.</p>
+        <button class="hero-cta" onclick="document.getElementById('store-section').scrollIntoView({behavior: 'smooth'})">Ver modelos</button>
+    </section>
+
+    <!-- Pestañas de Navegación del Catálogo -->
+    <div class="category-nav" id="store-section">
+        <button class="category-tab active" onclick="filtrar('todos', this)">Todos</button>
+        <button class="category-tab" onclick="filtrar('pastas', this)">Pastas Italianas</button>
+        <button class="category-tab" onclick="filtrar('panificados', this)">Panificados</button>
+    </div>
+
+    <!-- Grilla de Productos -->
+    <main class="store-grid">
+        
+        <!-- Producto 1 -->
+        <article class="product-card" data-category="panificados">
+            <span class="product-badge">Más vendido</span>
+            <div class="product-image-box">🍕</div>
+            <h3>Prepizzas Neolíticas</h3>
+            <p class="specs">Masa madre, fermentación 48hs. Pack x2 unidades.</p>
+            <div class="price">$4.200</div>
+            <button class="btn-buy" onclick="comprar('Prepizzas Neolíticas')">Comprar</button>
+        </article>
+
+        <!-- Producto 2 -->
+        <article class="product-card" data-category="pastas">
+            <span class="product-badge">Nuevo</span>
+            <div class="product-image-box">🥟</div>
+            <h3>Ravioloni Di Agnello</h3>
+            <p class="specs">Relleno de cordero braseado y sardo. Caja de 500g.</p>
+            <div class="price">$6.800</div>
+            <button class="btn-buy" onclick="comprar('Ravioloni Di Agnello')">Comprar</button>
+        </article>
+
+        <!-- Producto 3 -->
+        <article class="product-card" data-category="panificados">
+            <span class="product-badge">Premium</span>
+            <div class="product-image-box">🥮</div>
+            <h3>Tapas de Hojaldre Real</h3>
+            <p class="specs">120 capas de hojaldre de pura manteca para pascualina.</p>
+            <div class="price">$2.400</div>
+            <button class="btn-buy" onclick="comprar('Tapas de Hojaldre Real')">Comprar</button>
+        </article>
+<!-- Sección de Pago Estilo Premium -->
+<div id="seccion-pago" style="max-width: 450px; margin: 4rem auto; padding: 2.5rem; text-align: center; background-color: var(--samsung-gray-bg); border-radius: 20px;">
+    <h3 style="margin-top: 0; font-size: 1.5rem;">Resumen de Orden</h3>
+    <p style="color: var(--samsung-gray-text); font-size: 0.95rem; margin-bottom: 2rem;">
+        Paga de forma 100% segura con tarjetas o dinero en cuenta a través de Mercado Pago.
+    </p>
+    
+    <!-- Acá adentro Mercado Pago va a dibujar el botón real -->
+    <div id="walletBrick_container"></div> 
+</div>
+    </main>
+
+    <!-- Notificación flotante superior -->
+    <div id="toast">Agregado al ecosistema de compra</div>
+
+    <!-- Lógica de la Tienda -->
+    <script>
+        let items = 0;
+        const countBadge = document.getElementById('cart-count');
+        const toast = document.getElementById('toast');
+        let toastTimer;
+
+        function comprar(nombre) {
+            items++;
+            countBadge.textContent = items;
+            
+            toast.innerHTML = `🛒 Se añadió <strong>${nombre}</strong> al carrito.`;
+            toast.classList.add('visible');
+
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('visible');
+            }, 2500);
+        }
+
+        // Sistema dinámico de pestañas (Filtro)
+        function filtrar(categoria, elementoBotón) {
+            // Cambiar pestaña activa
+            document.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
+            elementoBotón.classList.add('active');
+
+            // Filtrar las tarjetas
+            document.querySelectorAll('.product-card').forEach(card => {
+                if(categoria === 'todos' || card.getAttribute('data-category') === categoria) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    // 1. Inicializamos Mercado Pago con una clave pública de prueba
+// Podés dejar esta para ver cómo se comporta el diseño
+const mp = new MercadoPago('TEST-40714856-bb6b-4e67-8549-354972f09d85', {
+    locale: 'es-AR'
+});
+
+// 2. Función para renderizar el botón oficial de Mercado Pago
+async function renderizarBotonPago(preferenceId) {
+    const bricksBuilder = mp.bricks();
+    
+    // Evitamos duplicar el botón si el usuario toca varias veces
+    const container = document.getElementById('walletBrick_container');
+    container.innerHTML = ''; 
+
+    await bricksBuilder.create("wallet", "walletBrick_container", {
+        initialization: {
+            preferenceId: preferenceId, // ID único que genera el servidor
+        },
+        customization: {
+            texts: {
+                valueProp: 'smart_option' // Muestra la leyenda "Paga de forma segura"
+            }
+        }
+    });
+}
+
+// Esta función ahora es REAL y busca un ID único para cada compra
+async function activarCheckoutReal() {
+    // 1. Armamos el carrito con lo que el usuario seleccionó
+    // (Ejemplo con un producto, pero acá iría tu lista de productos agregados)
+    const carrito = [
+        { title: "Prepizzas Neolíticas", quantity: 1, unit_price: 4200 }
+    ];
+
+    try {
+        // 2. Hacemos el puente hacia nuestro servidor backend
+        // Al usar '/api/create-preference', la web le habla en secreto al servidor
+        const response = await fetch('/api/create-preference', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ items: carrito })
+        });
+        
+        const data = await response.json();
+        
+        // 3. Si el servidor nos dio el ID, dibujamos el botón oficial de Mercado Pago
+        if (data.id) {
+            renderizarBotonPago(data.id);
+        } else {
+            alert("No se pudo iniciar el pago. Intentá de nuevo.");
+        }
+
+    } catch (error) {
+        console.error("Error de conexión con el servidor:", error);
+    }
+}
+
+// Reemplazamos la simulación por la función real
+comprar = function(nombre) {
+    funcionComprarOriginal(nombre);
+    activarCheckoutReal(); // Ahora genera un cobro de verdad cada vez que clickean
+}
+</script>
+</body>
+</html>
