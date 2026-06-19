@@ -378,8 +378,11 @@
 <body>
 
     <!-- Menú Superior -->
-    <header>
-        <div class="logo">al punto.</div>
+        <header>
+        <div class="logo" onclick="window.location.reload();" style="cursor: pointer; display: flex; align-items: center;">
+            <img src="logo.png" alt="Lumbut Logo" style="height: 55px; width: auto; display: block; object-fit: contain;">
+        </div>
+
         <nav class="nav-links">
             <a href="#">Inicio</a>
             <a href="#">Destacados</a>
@@ -388,8 +391,8 @@
         <button class="carrito-btn" onclick="toggleSidebar()">
             Carrito <span class="cart-badge" id="cart-count">0</span>
         </button>
-    </header>
-
+        </header>
+    
             </header>
 
     <section class="hero-banner">
