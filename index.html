@@ -16,7 +16,76 @@
             --samsung-blue: #1428a0; 
             --border-light: #dadada;
         }
+/* --- NUEVOS ESTILOS TIPO APP (CANTIDAD Y BOTÓN FIJO) --- */
+.quantity-control {
+    display: flex;
+    align-items: center;
+    background-color: #f3f4f6;
+    border-radius: 20px;
+    padding: 4px 12px;
+    gap: 14px;
+    width: fit-content;
+}
 
+.qty-btn {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #111111;
+    font-weight: bold;
+    padding: 0 4px;
+}
+
+.qty-number {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #111111;
+}
+
+.cart-footer {
+    padding: 20px;
+    border-top: 1px solid #e5e7eb;
+    background-color: #ffffff;
+    margin-top: auto;
+}
+
+.subtotal-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.subtotal-label {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #111111;
+}
+
+.subtotal-amount {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #111111;
+}
+
+.btn-pagar {
+    width: 100%;
+    background-color: #e21b5a;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 25px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-pagar:hover {
+    background-color: #c7124b;
+}
+        
         * {
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
