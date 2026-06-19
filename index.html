@@ -554,6 +554,41 @@
             // Corre el proceso de pago en segundo plano
             activarCheckoutReal(nombre);
         }
+        // Función para abrir y cerrar el panel lateral
+function toggleSidebar() {
+    document.getElementById('cart-sidebar').classList.toggle('active');
+    document.getElementById('sidebar-overlay').classList.toggle('active');
+}
+
+// Función para el botón "IR A PAGAR" dentro del panel
+function goToCheckout() {
+    toggleSidebar(); // Cierra el panel lateral primero
+    // Te desliza suavemente hasta la sección de pago de Mercado Pago
+    document.getElementById('seccion-pago').scrollIntoView({ behavior: 'smooth' });
+}
+        
     </script>
+    <div id="cart-sidebar" class="cart-sidebar">
+    <div class="cart-sidebar-header">
+        <h3>Carrito de Compras</h3>
+        <button class="close-sidebar-btn" onclick="toggleSidebar()">&times;</button>
+    </div>
+    
+    <div class="cart-sidebar-content">
+        <div id="sidebar-cart-items">
+            <p class="empty-cart-msg">El carrito de compras está vacío</p>
+        </div>
+    </div>
+    
+    <div class="cart-sidebar-footer">
+        <div class="cart-total-container">
+            <span>Subtotal</span>
+            <span id="sidebar-cart-total">$ 0</span>
+        </div>
+        <button class="btn-sidebar-pay" onclick="goToCheckout()">IR A PAGAR</button>
+    </div>
+</div>
+
+<div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
 </body>
 </html>
