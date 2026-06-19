@@ -691,27 +691,104 @@
         }
             </script>
     
+        <!-- Carrito Lateral con Flujo de Checkout de Dos Pasos -->
     <div id="cart-sidebar" class="cart-sidebar">
-    <div class="cart-sidebar-header">
-        <h3>Carrito de Compras</h3>
-        <button class="close-sidebar-btn" onclick="toggleSidebar()">&times;</button>
-    </div>
-    
-    <div class="cart-sidebar-content">
-        <div id="sidebar-cart-items">
-            <p class="empty-cart-msg">El carrito de compras está vacío</p>
+        
+        <!-- VISTA 1: LISTA DE PRODUCTOS -->
+        <div id="cart-view-main" style="display: flex; flex-direction: column; height: 100%;">
+            <div class="cart-sidebar-header">
+                <h3>Carrito de Compras</h3>
+                <button class="close-sidebar-btn" onclick="toggleSidebar()">&times;</button>
+            </div>
+            
+            <div class="cart-sidebar-content">
+                <div id="sidebar-cart-items">
+                    <p class="empty-cart-msg">El carrito de compras está vacío</p>
+                </div>
+            </div>
+            
+            <div class="cart-footer">
+                <div class="subtotal-row">
+                    <span class="subtotal-label">Subtotal</span>
+                    <span class="subtotal-amount" id="cart-subtotal">$ 0,00</span>
+                </div>
+                <button class="btn-pagar" onclick="goToCheckout()">Ir a pagar</button>
+            </div>
         </div>
-    </div>
-    
-        <div class="cart-footer">
-        <div class="subtotal-row">
-            <span class="subtotal-label">Subtotal</span>
-            <span class="subtotal-amount" id="cart-subtotal">$ 0,00</span>
-        </div>
-        <button class="btn-pagar" onclick="goToCheckout()">Ir a pagar</button>
-        </div>
-</div>
 
-<div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+        <!-- VISTA 2: ÚLTIMO PASO (CHECKOUT) -->
+        <div id="cart-view-checkout" style="display: none; flex-direction: column; height: 100%;">
+            <div class="cart-sidebar-header">
+                <button onclick="volverAlCarrito()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 0 10px 0 0;">←</button>
+                <h3>Último paso</h3>
+                <button class="close-sidebar-btn" onclick="toggleSidebar()">&times;</button>
+            </div>
+
+            <div class="cart-sidebar-content" style="text-align: left;">
+                <!-- Métodos de Pago -->
+                <h4 style="margin: 0 0 12px 0; font-size: 1rem; font-weight: 700;">¿Cómo querés pagar?</h4>
+                <div style="display: flex; gap: 12px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px;">
+                    <!-- Mercado Pago Card -->
+                    <div id="pay-mp" onclick="seleccionarMetodo('mp')" style="flex: 0 0 140px; border: 2px solid var(--samsung-black); border-radius: 14px; padding: 14px; text-align: center; cursor: pointer; background: #fff; transition: all 0.2s;">
+                        <div style="font-size: 1.4rem; margin-bottom: 4px;">💳</div>
+                        <strong style="font-size: 0.9rem; display: block;">Mercado Pago</strong>
+                    </div>
+                    <!-- Efectivo Card -->
+                    <div id="pay-cash" onclick="seleccionarMetodo('efectivo')" style="flex: 0 0 140px; border: 1px solid var(--border-light); border-radius: 14px; padding: 14px; text-align: center; cursor: pointer; background: #fff; transition: all 0.2s;">
+                        <div style="font-size: 1.4rem; margin-bottom: 4px;">💵</div>
+                        <strong style="font-size: 0.9rem; display: block;">Efectivo</strong>
+                    </div>
+                </div>
+
+                <!-- Datos de entrega -->
+                <h4 style="margin: 0 0 15px 0; font-size: 1rem; font-weight: 700;">Datos de entrega</h4>
+                
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <span style="font-size: 1.2rem;">🛵</span>
+                    <div>
+                        <strong style="font-size: 0.9rem; display: block;">Delivery</strong>
+                        <span style="font-size: 0.8rem; color: var(--samsung-gray-text);">20-40 min</span>
+                    </div>
+                </div>
+
+                <!-- Campo Dirección Real Funcional -->
+                <div style="margin-bottom: 15px;">
+                    <label style="font-size: 0.8rem; font-weight: 700; display: block; margin-bottom: 6px;">Dirección de entrega</label>
+                    <input type="text" id="checkout-address" placeholder="Ingresá tu calle, número y depto" style="width: 100%; padding: 12px; border: 1px solid var(--border-light); border-radius: 10px; font-size: 0.9rem; outline: none;">
+                </div>
+
+                <!-- Campo Instrucciones Funcional -->
+                <div style="margin-bottom: 25px;">
+                    <label style="font-size: 0.8rem; font-weight: 700; display: block; margin-bottom: 6px;">Instrucciones de entrega</label>
+                    <input type="text" id="checkout-instructions" placeholder="Ej: Portón negro, timbre B..." style="width: 100%; padding: 12px; border: 1px solid var(--border-light); border-radius: 10px; font-size: 0.9rem; outline: none;">
+                </div>
+
+                <!-- Resumen de Costos Limpio -->
+                <h4 style="margin: 0 0 12px 0; font-size: 1rem; font-weight: 700;">Resumen</h4>
+                <div style="font-size: 0.9rem; background: #f9f9f9; padding: 15px; border-radius: 12px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: var(--samsung-gray-text);">Productos</span>
+                        <span id="summary-products" style="font-weight: 600;">$ 0,00</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--samsung-gray-text);">Envío</span>
+                        <span style="font-weight: 600;">$ 1.799,00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Fijo de Compra Final -->
+            <div class="cart-footer" style="background-color: #fff;">
+                <div class="subtotal-row">
+                    <span class="subtotal-label">Total</span>
+                    <span class="subtotal-amount" id="summary-total">$ 1.799,00</span>
+                </div>
+                <button class="btn-pagar" onclick="procesarPedidoFinal()">Pagar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+            
 </body>
 </html>
