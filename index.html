@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <!-- SDK de Mercado Pago v2 -->
     <script src="https://sdk.mercadopago.com/js/v2"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,75 +15,76 @@
             --samsung-blue: #1428a0; 
             --border-light: #dadada;
         }
-/* --- NUEVOS ESTILOS TIPO APP (CANTIDAD Y BOTÓN FIJO) --- */
-.quantity-control {
-    display: flex;
-    align-items: center;
-    background-color: #f3f4f6;
-    border-radius: 20px;
-    padding: 4px 12px;
-    gap: 14px;
-    width: fit-content;
-}
 
-.qty-btn {
-    background: none;
-    border: none;
-    font-size: 1rem;
-    cursor: pointer;
-    color: #111111;
-    font-weight: bold;
-    padding: 0 4px;
-}
+        /* --- ESTILOS TIPO APP (CANTIDAD Y BOTÓN FIJO) --- */
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            background-color: #f3f4f6;
+            border-radius: 20px;
+            padding: 4px 12px;
+            gap: 14px;
+            width: fit-content;
+        }
 
-.qty-number {
-    font-weight: 700;
-    font-size: 0.95rem;
-    color: #111111;
-}
+        .qty-btn {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            color: #111111;
+            font-weight: bold;
+            padding: 0 4px;
+        }
 
-.cart-footer {
-    padding: 20px;
-    border-top: 1px solid #e5e7eb;
-    background-color: #ffffff;
-    margin-top: auto;
-}
+        .qty-number {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #111111;
+        }
 
-.subtotal-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
+        .cart-footer {
+            padding: 20px;
+            border-top: 1px solid #e5e7eb;
+            background-color: #ffffff;
+            margin-top: auto;
+        }
 
-.subtotal-label {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #111111;
-}
+        .subtotal-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
 
-.subtotal-amount {
-    font-size: 1.2rem;
-    font-weight: 800;
-    color: #111111;
-}
+        .subtotal-label {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #111111;
+        }
 
-.btn-pagar {
-    width: 100%;
-    background-color: #e21b5a;
-    color: white;
-    border: none;
-    padding: 14px;
-    border-radius: 25px;
-    font-size: 1.05rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.2s ease;
-}
+        .subtotal-amount {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #111111;
+        }
 
-.btn-pagar:hover {
-    background-color: #c7124b;
-}
+        .btn-pagar {
+            width: 100%;
+            background-color: #e21b5a;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 25px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .btn-pagar:hover {
+            background-color: #c7124b;
+        }
         
         * {
             box-sizing: border-box;
@@ -346,112 +346,84 @@
         #toast.visible {
             transform: translateX(0);
         }
+
         /* --- ESTILOS DEL CARRITO LATERAL --- */
-.cart-sidebar {
-    position: fixed;
-    top: 0;
-    right: -100%;
-    width: 85%;
-    max-width: 380px;
-    height: 100%;
-    background-color: var(--samsung-white, #ffffff);
-    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-    z-index: 9999;
-    transition: right 0.3s ease-in-out;
-    display: flex;
-    flex-direction: column;
-}
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 85%;
+            max-width: 380px;
+            height: 100%;
+            background-color: var(--samsung-white, #ffffff);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            z-index: 9999;
+            transition: right 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+        }
 
-.cart-sidebar.active {
-    right: 0; 
-}
+        .cart-sidebar.active {
+            right: 0; 
+        }
 
-.sidebar-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    z-index: 9998;
-    display: none;
-}
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 9998;
+            display: none;
+        }
 
-.sidebar-overlay.active {
-    display: block;
-}
+        .sidebar-overlay.active {
+            display: block;
+        }
 
-.cart-sidebar-header {
-    padding: 20px;
-    border-bottom: 1px solid #dadada;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+        .cart-sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #dadada;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-.cart-sidebar-header h3 {
-    margin: 0;
-    font-size: 1.2rem;
-    font-weight: 600;
-}
+        .cart-sidebar-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
 
-.close-sidebar-btn {
-    background: none;
-    border: none;
-    font-size: 1.8rem;
-    cursor: pointer;
-    color: #000;
-}
+        .close-sidebar-btn {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #000;
+        }
 
-.cart-sidebar-content {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-}
+        .cart-sidebar-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
 
-.empty-cart-msg {
-    text-align: center;
-    color: #777;
-    margin-top: 40px;
-    font-size: 0.95rem;
-}
-
-.cart-sidebar-footer {
-    padding: 20px;
-    border-top: 1px solid #dadada;
-    background-color: #f7f7f7;
-}
-
-.cart-total-container {
-    display: flex;
-    justify-content: space-between;
-    font-weight: bold;
-    margin-bottom: 15px;
-    font-size: 1.1rem;
-}
-
-.btn-sidebar-pay {
-    width: 100%;
-    padding: 14px;
-    background-color: #000000;
-    color: white;
-    border: none;
-    border-radius: 25px;
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
-    letter-spacing: 1px;
-        }    
+        .empty-cart-msg {
+            text-align: center;
+            color: #777;
+            margin-top: 40px;
+            font-size: 0.95rem;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Menú Superior -->
-        <header>
+    <header>
         <div class="logo" onclick="window.location.reload();" style="cursor: pointer; display: flex; align-items: center;">
             <img src="logo.png" alt="Lumbut Logo" style="height: 55px; width: auto; display: block; object-fit: contain;">
         </div>
-
         <nav class="nav-links">
             <a href="#">Inicio</a>
             <a href="#">Destacados</a>
@@ -460,25 +432,22 @@
         <button class="carrito-btn" onclick="toggleSidebar()">
             Carrito <span class="cart-badge" id="cart-count">0</span>
         </button>
-        </header>
+    </header>
     
-                <section class="hero-banner">
+    <section class="hero-banner">
         <span style="color: var(--samsung-blue); font-weight: 700; font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;">Lanzamiento Exclusivo</span>
         <h1>Línea Signature</h1>
         <p>Edición ultra premium de pastas artesanales y panificados listos para hornear. Elevá tus comidas diarias.</p>
         <button class="hero-cta" onclick="document.getElementById('store-section').scrollIntoView({behavior: 'smooth'})">Ver modelos</button>
-                </section>
+    </section>
     
-    <!-- Filtros -->
     <div class="category-nav" id="store-section">
         <button class="category-tab active" onclick="filtrar('todos', this)">Todos</button>
         <button class="category-tab" onclick="filtrar('pastas', this)">Pastas Italianas</button>
         <button class="category-tab" onclick="filtrar('panificados', this)">Panificados</button>
     </div>
 
-    <!-- Catálogo -->
     <main class="store-grid">
-        <!-- Producto 1 -->
         <article class="product-card" data-category="panificados">
             <span class="product-badge">Más vendido</span>
             <div class="product-image-box">🍕</div>
@@ -488,7 +457,6 @@
             <button class="btn-buy" onclick="comprar('Prepizzas Neolíticas')">Comprar</button>
         </article>
 
-        <!-- Producto 2 -->
         <article class="product-card" data-category="pastas">
             <span class="product-badge">Nuevo</span>
             <div class="product-image-box">🥟</div>
@@ -498,7 +466,6 @@
             <button class="btn-buy" onclick="comprar('Ravioloni Di Agnello')">Comprar</button>
         </article>
 
-        <!-- Producto 3 -->
         <article class="product-card" data-category="panificados">
             <span class="product-badge">Premium</span>
             <div class="product-image-box">🥮</div>
@@ -508,7 +475,6 @@
             <button class="btn-buy" onclick="comprar('Tapas de Hojaldre Real')">Comprar</button>
         </article>
 
-        <!-- Sección de Pago -->
         <div id="seccion-pago" style="grid-column: 1 / -1; max-width: 450px; margin: 3rem auto; padding: 2.5rem; text-align: center; background-color: var(--samsung-gray-bg); border-radius: 20px; width: 100%;">
             <h3 style="margin-top: 0; font-size: 1.5rem;">Resumen de Orden</h3>
             <p style="color: var(--samsung-gray-text); font-size: 0.95rem; margin-bottom: 2rem;">
@@ -518,118 +484,97 @@
         </div>
     </main>
 
-    <!-- Notificación flotante -->
     <div id="toast">Agregado al carrito</div>
 
-    <!-- Lógica de la Tienda -->
-        <script>
-        let carritoDeProductos = [];
-        const countBadge = document.getElementById('cart-count');
-        const toast = document.getElementById('toast');
-        let toastTimer;
-
-        // Inicializar Mercado Pago de forma segura
-        let mp;
-        try {
-            mp = new MercadoPago('APP_USR-b4108a49-fe76-472c-8308-20688f95f9e7', {
-                locale: 'es-AR'
-            });
-        } catch (e) {
-            console.error("Error al cargar SDK de Mercado Pago:", e);
-        }
-
-        // Sistema dinámico de pestañas (Filtro)
-        function filtrar(categoria, elementoBotón) {
-            document.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
-            elementoBotón.classList.add('active');
-
-            document.querySelectorAll('.product-card').forEach(card => {
-                if(categoria === 'todos' || card.getAttribute('data-category') === categoria) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
-        // Renderizar el botón oficial de Mercado Pago
-        async function renderizarBotonPago(preferenceId) {
-            if (!mp) return;
-            try {
-                const bricksBuilder = mp.bricks();
-                const container = document.getElementById('walletBrick_container');
-                container.innerHTML = ''; 
-
-                await bricksBuilder.create("wallet", "walletBrick_container", {
-                    initialization: {
-                        preferenceId: preferenceId,
-                    },
-                    customization: {
-                        texts: {
-                            valueProp: 'smart_option'
-                        }
-                    }
-                });
-            } catch (err) {
-                console.error("Error al crear el botón de pago:", err);
-            }
-        }
-
-        // Actualiza visualmente los productos dentro del panel del carrito
-        function actualizarInterfazCarrito() {
-            const contenedorItems = document.getElementById('sidebar-cart-items');
-            const txtSubtotal = document.getElementById('cart-subtotal');
+    <div id="cart-sidebar" class="cart-sidebar">
+        
+        <div id="cart-view-main" style="display: flex; flex-direction: column; height: 100%;">
+            <div class="cart-sidebar-header">
+                <h3>Carrito de Compras</h3>
+                <button class="close-sidebar-btn" onclick="toggleSidebar()">&times;</button>
+            </div>
             
-            if (carritoDeProductos.length === 0) {
-                contenedorItems.innerHTML = '<p class="empty-cart-msg">El carrito de compras está vacío</p>';
-                if (txtSubtotal) txtSubtotal.textContent = '$ 0,00';
-                if (countBadge) countBadge.textContent = '0';
-                return;
-            }
+            <div class="cart-sidebar-content">
+                <div id="sidebar-cart-items">
+                    <p class="empty-cart-msg">El carrito de compras está vacío</p>
+                </div>
+            </div>
+            
+            <div class="cart-footer">
+                <div class="subtotal-row">
+                    <span class="subtotal-label">Subtotal</span>
+                    <span class="subtotal-amount" id="cart-subtotal">$ 0,00</span>
+                </div>
+                <button class="btn-pagar" onclick="goToCheckout()">Ir a pagar</button>
+            </div>
+        </div>
 
-            let totalItems = 0;
-            let subtotalGeneral = 0;
-            let htmlContenido = '';
+        <div id="cart-view-checkout" style="display: none; flex-direction: column; height: 100%;">
+            <div class="cart-sidebar-header">
+                <button onclick="volverAlCarrito()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 0 10px 0 0; color: black;">←</button>
+                <h3>Último paso</h3>
+                <button class="close-sidebar-btn" onclick="toggleSidebar()">&times;</button>
+            </div>
 
-            carritoDeProductos.forEach((prod, index) => {
-                totalItems += prod.quantity;
-                subtotalGeneral += prod.unit_price * prod.quantity;
-
-                htmlContenido += `
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px;">
-                        <div style="text-align: left;">
-                            <h4 style="margin: 0 0 5px 0; font-size: 0.95rem; font-weight: 600; color: #000000;">${prod.title}</h4>
-                            <span style="color: var(--samsung-gray-text); font-size: 0.85rem; font-weight: 700;">$${(prod.unit_price * prod.quantity).toLocaleString('es-AR')}</span>
-                        </div>
-                        <div class="quantity-control">
-                            <button class="qty-btn" onclick="cambiarCantidad(${index}, -1)">${prod.quantity === 1 ? '🗑️' : '-'}</button>
-                            <span class="qty-number">${prod.quantity}</span>
-                            <button class="qty-btn" onclick="cambiarCantidad(${index}, 1)">+</button>
-                        </div>
+            <div class="cart-sidebar-content" style="text-align: left; padding: 20px;">
+                <h4 style="margin: 0 0 12px 0; font-size: 1rem; font-weight: 700; color: black;">¿Cómo querés pagar?</h4>
+                <div style="display: flex; gap: 12px; margin-bottom: 25px; padding-bottom: 5px;">
+                    <div id="pay-mp" onclick="seleccionarMetodo('mp')" style="flex: 1; border: 2px solid var(--samsung-black); border-radius: 14px; padding: 14px; text-align: center; cursor: pointer; background: #fff; transition: all 0.2s;">
+                        <div style="font-size: 1.4rem; margin-bottom: 4px;">💳</div>
+                        <strong style="font-size: 0.9rem; display: block; color: black;">Mercado Pago</strong>
                     </div>
-                `;
-            });
+                    <div id="pay-cash" onclick="seleccionarMetodo('efectivo')" style="flex: 1; border: 1px solid var(--border-light); border-radius: 14px; padding: 14px; text-align: center; cursor: pointer; background: #fff; transition: all 0.2s;">
+                        <div style="font-size: 1.4rem; margin-bottom: 4px;">💵</div>
+                        <strong style="font-size: 0.9rem; display: block; color: black;">efectivo</strong>
+                    </div>
+                </div>
 
-            contenedorItems.innerHTML = htmlContenido;
-            if (countBadge) countBadge.textContent = totalItems;
-            if (txtSubtotal) txtSubtotal.textContent = `$ ${subtotalGeneral.toLocaleString('es-AR')}`;
-        }
+                <h4 style="margin: 0 0 15px 0; font-size: 1rem; font-weight: 700; color: black;">Datos de entrega</h4>
+                
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <span style="font-size: 1.2rem;">🛵</span>
+                    <div>
+                        <strong style="font-size: 0.9rem; display: block; color: black;">Delivery</strong>
+                        <span style="font-size: 0.8rem; color: var(--samsung-gray-text);">20-40 min</span>
+                    </div>
+                </div>
 
-        // Controla las cantidades (+ / - / eliminar)
-        function cambiarCantidad(index, cambio) {
-            carritoDeProductos[index].quantity += cambio;
-            if (carritoDeProductos[index].quantity <= 0) {
-                carritoDeProductos.splice(index, 1);
-            }
-            actualizarInterfazCarrito();
-            
-            if (carritoDeProductos.length > 0) {
-                activarCheckoutReal();
-            } else {
-                const container = document.getElementById('walletBrick_container');
-                if (container) container.innerHTML = '';
-            }
-        }
+                <div style="margin-bottom: 15px;">
+                    <label style="font-size: 0.8rem; font-weight: 700; display: block; margin-bottom: 6px; color: black;">Dirección de entrega</label>
+                    <input type="text" id="checkout-address" placeholder="Ingresá tu calle, número y depto" style="width: 100%; padding: 12px; border: 1px solid var(--border-light); border-radius: 10px; font-size: 0.9rem; outline: none; color: black; background: white;">
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <label style="font-size: 0.8rem; font-weight: 700; display: block; margin-bottom: 6px; color: black;">Instrucciones de entrega</label>
+                    <input type="text" id="checkout-instructions" placeholder="Ej: Portón negro, timbre B..." style="width: 100%; padding: 12px; border: 1px solid var(--border-light); border-radius: 10px; font-size: 0.9rem; outline: none; color: black; background: white;">
+                </div>
+
+                <h4 style="margin: 0 0 12px 0; font-size: 1rem; font-weight: 700; color: black;">Resumen</h4>
+                <div style="font-size: 0.9rem; background: #f9f9f9; padding: 15px; border-radius: 12px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: var(--samsung-gray-text);">Productos</span>
+                        <span id="summary-products" style="font-weight: 600; color: black;">$ 0,00</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--samsung-gray-text);">Envío</span>
+                        <span style="font-weight: 600; color: black;">$ 1.799,00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cart-footer" style="background-color: #fff;">
+                <div class="subtotal-row">
+                    <span class="subtotal-label">Total</span>
+                    <span class="subtotal-amount" id="summary-total">$ 1.799,00</span>
+                </div>
+       <button class="btn-pagar" onclick="procesarPedidoFinal()">Pagar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Lógica JavaScript Unificada -->
     <script>
         let carritoDeProductos = [];
         const countBadge = document.getElementById('cart-count');
@@ -854,229 +799,12 @@
                 alert(`Dirección registrada: ${direccion}. Procedé a abonar con el botón de Mercado Pago abajo de la tienda.`);
             } else {
                 // Flujo Efectivo
-                alert(`¡Pedido Confirmado con éxito!\n\nMétodo: Efectivo al recibir\nDirección: ${direccion}\nInstrucciones: ${instrucciones || 'Ninguna'}\n\n¡Muchas gracias por elegir Al Punto!`);
+                alert(`¡Pedido Confirmado con éxito!\n\nMétodo: efectivo al recibir\nDirección: ${direccion}\nInstrucciones: ${instrucciones || 'Ninguna'}\n\n¡Muchas gracias por elegir Al Punto!`);
                 carritoDeProductos = [];
                 actualizarInterfazCarrito();
                 toggleSidebar();
             }
         }
     </script>
-
-    <div id="cart-sidebar" class="cart-sidebar">
-        
-        <div id="cart-view-main" style="display: flex; flex-direction: column; height: 100%;">
-            <div class="cart-sidebar-header">
-                <h3>Carrito de Compras</h3>
-                <button class="close-sidebar-btn" onclick="toggleSidebar()">&times;</button>
-            </div>
-            
-            <div class="cart-sidebar-content">
-                <div id="sidebar-cart-items">
-                    <p class="empty-cart-msg">El carrito de compras está vacío</p>
-                </div>
-            </div>
-            
-            <div class="cart-footer">
-                <div class="subtotal-row">
-                    <span class="subtotal-label">Subtotal</span>
-                    <span class="subtotal-amount" id="cart-subtotal">$ 0,00</span>
-                </div>
-                <button class="btn-pagar" onclick="goToCheckout()">Ir a pagar</button>
-            </div>
-        </div>
-
-        <div id="cart-view-checkout" style="display: none; flex-direction: column; height: 100%;">
-            <div class="cart-sidebar-header">
-                <button onclick="volverAlCarrito()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 0 10px 0 0; color: black;">←</button>
-                <h3>Último paso</h3>
-                <button class="close-sidebar-btn" onclick="toggleSidebar()">&times;</button>
-            </div>
-
-            <div class="cart-sidebar-content" style="text-align: left; padding: 20px;">
-                <h4 style="margin: 0 0 12px 0; font-size: 1rem; font-weight: 700;">¿Cómo querés pagar?</h4>
-                <div style="display: flex; gap: 12px; margin-bottom: 25px; padding-bottom: 5px;">
-                    <div id="pay-mp" onclick="seleccionarMetodo('mp')" style="flex: 1; border: 2px solid var(--samsung-black); border-radius: 14px; padding: 14px; text-align: center; cursor: pointer; background: #fff; transition: all 0.2s;">
-                        <div style="font-size: 1.4rem; margin-bottom: 4px;">💳</div>
-                        <strong style="font-size: 0.9rem; display: block; color: black;">Mercado Pago</strong>
-                    </div>
-                    <div id="pay-cash" onclick="seleccionarMetodo('efectivo')" style="flex: 1; border: 1px solid var(--border-light); border-radius: 14px; padding: 14px; text-align: center; cursor: pointer; background: #fff; transition: all 0.2s;">
-                        <div style="font-size: 1.4rem; margin-bottom: 4px;">💵</div>
-                        <strong style="font-size: 0.9rem; display: block; color: black;">Efectivo</strong>
-                    </div>
-                </div>
-
-                <h4 style="margin: 0 0 15px 0; font-size: 1rem; font-weight: 700;">Datos de entrega</h4>
-                
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                    <span style="font-size: 1.2rem;">🛵</span>
-                    <div>
-                        <strong style="font-size: 0.9rem; display: block; color: black;">Delivery</strong>
-                        <span style="font-size: 0.8rem; color: var(--samsung-gray-text);">20-40 min</span>
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 15px;">
-                    <label style="font-size: 0.8rem; font-weight: 700; display: block; margin-bottom: 6px; color: black;">Dirección de entrega</label>
-                    <input type="text" id="checkout-address" placeholder="Ingresá tu calle, número y depto" style="width: 100%; padding: 12px; border: 1px solid var(--border-light); border-radius: 10px; font-size: 0.9rem; outline: none; color: black; background: white;">
-                </div>
-
-                <div style="margin-bottom: 25px;">
-                    <label style="font-size: 0.8rem; font-weight: 700; display: block; margin-bottom: 6px; color: black;">Instrucciones de entrega</label>
-                    <input type="text" id="checkout-instructions" placeholder="Ej: Portón negro, timbre B..." style="width: 100%; padding: 12px; border: 1px solid var(--border-light); border-radius: 10px; font-size: 0.9rem; outline: none; color: black; background: white;">
-                </div>
-
-                <h4 style="margin: 0 0 12px 0; font-size: 1rem; font-weight: 700;">Resumen</h4>
-                <div style="font-size: 0.9rem; background: #f9f9f9; padding: 15px; border-radius: 12px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <span style="color: var(--samsung-gray-text);">Productos</span>
-                        <span id="summary-products" style="font-weight: 600; color: black;">$ 0,00</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <span style="color: var(--samsung-gray-text);">Envío</span>
-                        <span style="font-weight: 600; color: black;">$ 1.799,00</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="cart-footer" style="background-color: #fff;">
-                <div class="subtotal-row">
-                    <span class="subtotal-label">Total</span>
-                    <span class="subtotal-amount" id="summary-total">$ 1.799,00</span>
-                </div>
-                <button class="btn-pagar" onclick="procesarPedidoFinal()">Pagar</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
-    
-            }
-
-            actualizarInterfazCarrito();
-
-            if (toast) {
-                toast.innerHTML = `🛒 Se añadió <strong>${nombre}</strong> al carrito.`;
-                toast.classList.add('visible');
-                clearTimeout(toastTimer);
-                toastTimer = setTimeout(() => {
-                    toast.classList.remove('visible');
-                }, 2500);
-            }
-
-            activarCheckoutReal();
-        }
-
-        // Abrir y cerrar el panel lateral
-        function toggleSidebar() {
-            document.getElementById('cart-sidebar').classList.toggle('active');
-            document.getElementById('sidebar-overlay').classList.toggle('active');
-        }
-
-        // Acción del botón principal "Ir a pagar"
-        function goToCheckout() {
-            toggleSidebar();
-            document.getElementById('seccion-pago').scrollIntoView({ behavior: 'smooth' });
-        }
-            </script>
-    
-        <!-- Carrito Lateral con Flujo de Checkout de Dos Pasos -->
-    <div id="cart-sidebar" class="cart-sidebar">
-        
-        <!-- VISTA 1: LISTA DE PRODUCTOS -->
-        <div id="cart-view-main" style="display: flex; flex-direction: column; height: 100%;">
-            <div class="cart-sidebar-header">
-                <h3>Carrito de Compras</h3>
-                <button class="close-sidebar-btn" onclick="toggleSidebar()">&times;</button>
-            </div>
-            
-            <div class="cart-sidebar-content">
-                <div id="sidebar-cart-items">
-                    <p class="empty-cart-msg">El carrito de compras está vacío</p>
-                </div>
-            </div>
-            
-            <div class="cart-footer">
-                <div class="subtotal-row">
-                    <span class="subtotal-label">Subtotal</span>
-                    <span class="subtotal-amount" id="cart-subtotal">$ 0,00</span>
-                </div>
-                <button class="btn-pagar" onclick="goToCheckout()">Ir a pagar</button>
-            </div>
-        </div>
-
-        <!-- VISTA 2: ÚLTIMO PASO (CHECKOUT) -->
-        <div id="cart-view-checkout" style="display: none; flex-direction: column; height: 100%;">
-            <div class="cart-sidebar-header">
-                <button onclick="volverAlCarrito()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 0 10px 0 0;">←</button>
-                <h3>Último paso</h3>
-                <button class="close-sidebar-btn" onclick="toggleSidebar()">&times;</button>
-            </div>
-
-            <div class="cart-sidebar-content" style="text-align: left;">
-                <!-- Métodos de Pago -->
-                <h4 style="margin: 0 0 12px 0; font-size: 1rem; font-weight: 700;">¿Cómo querés pagar?</h4>
-                <div style="display: flex; gap: 12px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px;">
-                    <!-- Mercado Pago Card -->
-                    <div id="pay-mp" onclick="seleccionarMetodo('mp')" style="flex: 0 0 140px; border: 2px solid var(--samsung-black); border-radius: 14px; padding: 14px; text-align: center; cursor: pointer; background: #fff; transition: all 0.2s;">
-                        <div style="font-size: 1.4rem; margin-bottom: 4px;">💳</div>
-                        <strong style="font-size: 0.9rem; display: block;">Mercado Pago</strong>
-                    </div>
-                    <!-- Efectivo Card -->
-                    <div id="pay-cash" onclick="seleccionarMetodo('efectivo')" style="flex: 0 0 140px; border: 1px solid var(--border-light); border-radius: 14px; padding: 14px; text-align: center; cursor: pointer; background: #fff; transition: all 0.2s;">
-                        <div style="font-size: 1.4rem; margin-bottom: 4px;">💵</div>
-                        <strong style="font-size: 0.9rem; display: block;">Efectivo</strong>
-                    </div>
-                </div>
-
-                <!-- Datos de entrega -->
-                <h4 style="margin: 0 0 15px 0; font-size: 1rem; font-weight: 700;">Datos de entrega</h4>
-                
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                    <span style="font-size: 1.2rem;">🛵</span>
-                    <div>
-                        <strong style="font-size: 0.9rem; display: block;">Delivery</strong>
-                        <span style="font-size: 0.8rem; color: var(--samsung-gray-text);">20-40 min</span>
-                    </div>
-                </div>
-
-                <!-- Campo Dirección Real Funcional -->
-                <div style="margin-bottom: 15px;">
-                    <label style="font-size: 0.8rem; font-weight: 700; display: block; margin-bottom: 6px;">Dirección de entrega</label>
-                    <input type="text" id="checkout-address" placeholder="Ingresá tu calle, número y depto" style="width: 100%; padding: 12px; border: 1px solid var(--border-light); border-radius: 10px; font-size: 0.9rem; outline: none;">
-                </div>
-
-                <!-- Campo Instrucciones Funcional -->
-                <div style="margin-bottom: 25px;">
-                    <label style="font-size: 0.8rem; font-weight: 700; display: block; margin-bottom: 6px;">Instrucciones de entrega</label>
-                    <input type="text" id="checkout-instructions" placeholder="Ej: Portón negro, timbre B..." style="width: 100%; padding: 12px; border: 1px solid var(--border-light); border-radius: 10px; font-size: 0.9rem; outline: none;">
-                </div>
-
-                <!-- Resumen de Costos Limpio -->
-                <h4 style="margin: 0 0 12px 0; font-size: 1rem; font-weight: 700;">Resumen</h4>
-                <div style="font-size: 0.9rem; background: #f9f9f9; padding: 15px; border-radius: 12px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <span style="color: var(--samsung-gray-text);">Productos</span>
-                        <span id="summary-products" style="font-weight: 600;">$ 0,00</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <span style="color: var(--samsung-gray-text);">Envío</span>
-                        <span style="font-weight: 600;">$ 1.799,00</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer Fijo de Compra Final -->
-            <div class="cart-footer" style="background-color: #fff;">
-                <div class="subtotal-row">
-                    <span class="subtotal-label">Total</span>
-                    <span class="subtotal-amount" id="summary-total">$ 1.799,00</span>
-                </div>
-                <button class="btn-pagar" onclick="procesarPedidoFinal()">Pagar</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
-            
 </body>
 </html>
