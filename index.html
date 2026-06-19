@@ -808,3 +808,251 @@
     </script>
 </body>
 </html>
+    <!-- ========================================== -->
+    <!-- INTERFAZ DE INICIO DE SESIÓN Y HISTORIAL -->
+    <!-- ========================================== -->
+    <style>
+        /* Estilos del Modal de Cuentas */
+        .auth-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .auth-modal.active {
+            display: flex;
+        }
+        .auth-card {
+            background-color: white;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            position: relative;
+            text-align: left;
+        }
+        .auth-card h3 {
+            margin: 0 0 8px 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: black;
+        }
+        .auth-tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #dadada;
+        }
+        .auth-tab {
+            background: none;
+            border: none;
+            padding: 10px 0;
+            font-size: 0.95rem;
+            cursor: pointer;
+            color: #707070;
+            font-weight: 500;
+            position: relative;
+        }
+        .auth-tab.active {
+            color: black;
+            font-weight: 700;
+        }
+        .auth-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: black;
+        }
+        .auth-input-group {
+            margin-bottom: 15px;
+        }
+        .auth-input-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: black;
+        }
+        .auth-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dadada;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            outline: none;
+            color: black;
+            background: white;
+        }
+        .auth-btn {
+            width: 100%;
+            background-color: black;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .order-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            background: #f9f9f9;
+        }
+    </style>
+
+    <!-- Estructura de la Ventana de Login/Perfil -->
+    <div class="auth-modal" id="auth-modal">
+        <div class="auth-card">
+            <button onclick="toggleAuthModal()" style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: black;">&times;</button>
+            
+            <!-- FORMULARIO: INICIAR SESIÓN / REGISTRO -->
+            <div id="auth-view-form">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" id="tab-login" onclick="cambiarAuthTab('login')">Ingresar</button>
+                    <button class="auth-tab" id="tab-register" onclick="cambiarAuthTab('register')">Crear Cuenta</button>
+                </div>
+
+                <div id="register-only-fields" style="display: none;">
+                    <div class="auth-input-group">
+                        <label>Nombre Completo</label>
+                        <input type="text" id="auth-name" class="auth-input" placeholder="Tu nombre">
+                    </div>
+                </div>
+
+                <div class="auth-input-group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" id="auth-email" class="auth-input" placeholder="ejemplo@correo.com">
+                </div>
+
+                <div class="auth-input-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="auth-password" class="auth-input" placeholder="••••••••">
+                </div>
+
+                <button class="auth-btn" id="auth-submit-btn" onclick="simularLoginReal()">Entrar</button>
+            </div>
+
+            <!-- VISTA: PERFIL DE USUARIO Y HISTORIAL -->
+            <div id="auth-view-profile" style="display: none; flex-direction: column;">
+                <h3>Mi Cuenta</h3>
+                <p style="margin: 0 0 20px 0; color: #707070; font-size: 0.9rem;" id="profile-welcome">¡Hola de nuevo!</p>
+                
+                <h4 style="margin: 10px 0 10px 0; font-size: 1rem; font-weight: 700; color: black;">Historial de Pedidos</h4>
+                <div id="orders-history" style="max-height: 220px; overflow-y: auto; margin-bottom: 20px; padding-right: 5px;">
+                    <!-- Pedido Demo -->
+                    <div class="order-card">
+                        <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 6px; color: black;">
+                            <span>Orden #2941</span>
+                            <span style="color: #1428a0;">En camino 🛵</span>
+                        </div>
+                        <div style="color: #707070; font-size: 0.8rem; margin-bottom: 4px;">1x Prepizzas Neolíticas, 1x Ravioloni</div>
+                        <div style="font-weight: 700; color: black; border-top: 1px dashed #dadada; padding-top: 4px; margin-top: 4px;">Total: $12.799</div>
+                    </div>
+                </div>
+
+                <button class="auth-btn" style="background-color: #e21b5a;" onclick="simularLogoutReal()">Cerrar Sesión</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let sesionUsuario = null;
+        let modoActual = 'login';
+
+        // Pone automáticamente el botón "Mi Cuenta" en la barra de arriba al cargar
+        document.addEventListener("DOMContentLoaded", () => {
+            const barraNavegacion = document.querySelector("header .nav-links");
+            if (barraNavegacion) {
+                const linkCuenta = document.createElement("a");
+                linkCuenta.href = "#";
+                linkCuenta.id = "nav-account-btn";
+                linkCuenta.textContent = "Mi Cuenta";
+                linkCuenta.style.fontWeight = "600";
+                linkCuenta.onclick = (e) => {
+                    e.preventDefault();
+                    toggleAuthModal();
+                };
+                barraNavegacion.appendChild(linkCuenta);
+            }
+        });
+
+        function toggleAuthModal() {
+            document.getElementById('auth-modal').classList.toggle('active');
+            comprobarEstadoPerfil();
+        }
+
+        function cambiarAuthTab(modo) {
+            modoActual = modo;
+            const tabIn = document.getElementById('tab-login');
+            const tabReg = document.getElementById('tab-register');
+            const camposReg = document.getElementById('register-only-fields');
+            const btnConfirmar = document.getElementById('auth-submit-btn');
+
+            if (modo === 'login') {
+                tabIn.classList.add('active');
+                tabReg.classList.remove('active');
+                camposReg.style.display = 'none';
+                btnConfirmar.textContent = 'Entrar';
+            } else {
+                tabReg.classList.add('active');
+                tabIn.classList.remove('active');
+                camposReg.style.display = 'block';
+                btnConfirmar.textContent = 'Registrarse';
+            }
+        }
+
+        function comprobarEstadoPerfil() {
+            const vistaFormulario = document.getElementById('auth-view-form');
+            const vistaPerfil = document.getElementById('auth-view-profile');
+            const btnMenu = document.getElementById('nav-account-btn');
+
+            if (sesionUsuario) {
+                vistaFormulario.style.display = 'none';
+                vistaPerfil.style.display = 'flex';
+                document.getElementById('profile-welcome').textContent = `Conectado como: ${sesionUsuario.email}`;
+                if (btnMenu) btnMenu.textContent = "Mi Perfil 👤";
+            } else {
+                vistaFormulario.style.display = 'block';
+                vistaPerfil.style.display = 'none';
+                if (btnMenu) btnMenu.textContent = "Mi Cuenta";
+            }
+        }
+
+        // Simulación visual antes de meter la base de datos Firebase
+        function simularLoginReal() {
+            const correo = document.getElementById('auth-email').value.trim();
+            if (!correo) {
+                alert("Por favor, poné un correo electrónico válido.");
+                return;
+            }
+            sesionUsuario = { email: correo };
+            comprobarEstadoPerfil();
+            alert("Sesión iniciada (Modo de prueba visual).");
+            toggleAuthModal();
+        }
+
+        function simularLogoutReal() {
+            sesionUsuario = null;
+            comprobarEstadoPerfil();
+            alert("Sesión cerrada.");
+            toggleAuthModal();
+        }
+    </script>
+    
