@@ -799,10 +799,28 @@
                 alert(`Dirección registrada: ${direccion}. Procedé a abonar con el botón de Mercado Pago abajo de la tienda.`);
             } else {
                 // Flujo Efectivo
-                alert(`¡Pedido Confirmado con éxito!\n\nMétodo: efectivo al recibir\nDirección: ${direccion}\nInstrucciones: ${instrucciones || 'Ninguna'}\n\n¡Muchas gracias por elegir Al Punto!`);
-                carritoDeProductos = [];
-                actualizarInterfazCarrito();
-                toggleSidebar();
+// 1. Mandamos los datos en vivo a tu base de datos de Firebase
+firebase.firestore().collection('pedidos').add({
+    direccion: direccion,
+    instrucciones: instrucciones || 'Ninguna',
+    productos: carritoDeProductos,
+    metodo: 'Efectivo',
+    fecha: new Date().toLocaleString('es-AR')
+})
+.then(() => {
+    // 2. Si Firebase responde que se guardó bien, recién ahí muestra el éxito
+    alert(`¡Pedido Confirmado y enviado a Firebase con éxito!\n\nMétodo: efectivo al recibir\nDirección: ${direccion}\n\nMuchas gracias por elegir Al Punto!`);
+    
+    // 3. Limpiamos el carrito
+    carritoDeProductos = [];
+    actualizarInterfazCarrito();
+    toggleSidebar();
+})
+.catch((error) => {
+    // Si algo falla (por ejemplo, falta internet), te avisa acá
+    alert('Error al conectar con la base de datos: ' + error.message);
+});
+
             }
         }
     </script>
