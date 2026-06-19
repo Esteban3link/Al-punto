@@ -1055,4 +1055,164 @@
             toggleAuthModal();
         }
     </script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // 1. Configuración de tu base de datos (Se cambia más adelante)
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY_AQUÍ",
+            authDomain: "TU_AUTH_DOMAIN_AQUÍ",
+            projectId: "TU_PROJECT_ID_AQUÍ",
+            storageBucket: "TU_STORAGE_BUCKET_AQUÍ",
+            messagingSenderId: "TU_MESSAGING_SENDER_ID_AQUÍ",
+            appId: "TU_APP_ID_AQUÍ"
+        };
+
+        // Inicializar Firebase de forma segura
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // 2. Escuchar en tiempo real el estado del usuario
+        auth.onAuthStateChanged(user => {
+            const vistaFormulario = document.getElementById('auth-view-form');
+            const vistaPerfil = document.getElementById('auth-view-profile');
+            const btnMenu = document.getElementById('nav-account-btn');
+
+            if (user) {
+                sesionUsuario = user;
+                if(vistaFormulario) vistaFormulario.style.display = 'none';
+                if(vistaPerfil) vistaPerfil.style.display = 'flex';
+                
+                const txtWelcome = document.getElementById('profile-welcome');
+                if(txtWelcome) txtWelcome.textContent = `Conectado como: ${user.email}`;
+                if (btnMenu) btnMenu.textContent = "Mi Perfil 👤";
+                
+                cargarHistorialPedidos(user.uid);
+            } else {
+                sesionUsuario = null;
+                if(vistaFormulario) vistaFormulario.style.display = 'block';
+                if(vistaPerfil) vistaPerfil.style.display = 'none';
+                if (btnMenu) btnMenu.textContent = "Mi Cuenta";
+            }
+        });
+
+        // 3. Conexión Real para el botón "Entrar" / "Registrarse"
+        async function simularLoginReal() {
+            const correo = document.getElementById('auth-email').value.trim();
+            const contrasena = document.getElementById('auth-password').value.trim();
+            const nombreInput = document.getElementById('auth-name');
+            const nombre = nombreInput ? nombreInput.value.trim() : "";
+
+            if (!correo || !contrasena) {
+                alert("Por favor, completá los campos de correo y contraseña.");
+                return;
+            }
+
+            try {
+                if (modoActual === 'login') {
+                    await auth.signInWithEmailAndPassword(correo, contrasena);
+                    alert("¡Sesión iniciada con éxito!");
+                } else {
+                    if (!nombre) { alert("Por favor, ingresá tu nombre."); return; }
+                    const credencial = await auth.createUserWithEmailAndPassword(correo, contrasena);
+                    
+                    await db.collection("usuarios").doc(credencial.user.uid).set({
+                        nombre: nombre,
+                        email: correo,
+                        fechaRegistro: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    alert("¡Cuenta creada correctamente!");
+                }
+                toggleAuthModal();
+            } catch (error) {
+                console.error(error);
+                alert("Error: " + error.message);
+            }
+        }
+
+        // 4. Conexión Real para Cerrar Sesión
+        async function simularLogoutReal() {
+            try {
+                await auth.signOut();
+                alert("Sesión cerrada.");
+                toggleAuthModal();
+            } catch (error) {
+                alert("Error al cerrar sesión.");
+            }
+        }
+
+        // 5. Guardar pedidos automáticamente en la base de datos
+        async function guardarPedidoEnFirebase(direccion, instrucciones, metodo) {
+            if (!sesionUsuario) return;
+
+            let subtotalGeneral = 0;
+            if (typeof carritoDeProductos !== 'undefined') {
+                carritoDeProductos.forEach(p => subtotalGeneral += (p.unit_price * p.quantity));
+            }
+
+            const nuevoPedido = {
+                usuarioId: sesionUsuario.uid,
+                productos: typeof carritoDeProductos !== 'undefined' ? carritoDeProductos : [],
+                subtotal: subtotalGeneral,
+                envio: typeof costoEnvio !== 'undefined' ? costoEnvio : 1799,
+                total: subtotalGeneral + (typeof costoEnvio !== 'undefined' ? costoEnvio : 1799),
+                direccion: direccion,
+                instrucciones: instrucciones,
+                metodoPago: metodo,
+                estado: "Pendiente ⏳",
+                fecha: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                await db.collection("pedidos").add(nuevoPedido);
+            } catch (error) {
+                console.error("No se pudo guardar el historial del pedido:", error);
+            }
+        }
+
+        // 6. Traer los pedidos reales desde Firestore
+        function cargarHistorialPedidos(uid) {
+            const contenedorHistorial = document.getElementById('orders-history');
+            if(!contenedorHistorial) return;
+            
+            db.collection("pedidos")
+              .where("usuarioId", "==", uid)
+              .orderBy("fecha", "desc")
+              .onSnapshot(snapshot => {
+                  if (snapshot.empty) {
+                      contenedorHistorial.innerHTML = '<p style="color:#707070; font-size:0.85rem; text-align:center;">Aún no realizaste ningún pedido.</p>';
+                      return;
+                  }
+
+                  let html = '';
+                  snapshot.forEach(doc => {
+                      const pedido = doc.data();
+                      const listaProd = pedido.productos.map(p => `${p.quantity}x ${p.title}`).join(', ');
+                      
+                      html += `
+                          <div class="order-card">
+                              <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 6px; color: black;">
+                                  <span>Pedido #${doc.id.substring(0,5).toUpperCase()}</span>
+                                  <span style="color: #1428a0;">${pedido.estado}</span>
+                              </div>
+                              <div style="color: #707070; font-size: 0.8rem; margin-bottom: 4px;">${listaProd}</div>
+                              <div style="font-weight: 700; color: black; border-top: 1px dashed #dadada; padding-top: 4px; margin-top: 4px;">Total: $${pedido.total.toLocaleString('es-AR')}</div>
+                          </div>
+                      `;
+                  });
+                  contenedorHistorial.innerHTML = html;
+              }, error => {
+                  console.log("Error al cargar pedidos: ", error);
+              });
+        }
+    </script>
+</body>
+</html>
+
+
     
