@@ -451,34 +451,74 @@
         }
 
         function procesarPedidoFinal() {
-            const direccion = document.getElementById('checkout-address').value.trim();
-            const instrucciones = document.getElementById('checkout-instructions').value.trim();
-            if (!direccion) { alert("Por favor, ingresá una dirección."); return; }
-            if (metodoSeleccionado === 'mp') {
-                toggleSidebar();
-                document.getElementById('seccion-pago').scrollIntoView({ behavior: 'smooth' });
-                alert(`Dirección registrada. Procedé a pagar abajo con Mercado Pago.`);
-            } else {
-                let subtotalGeneral = 0;
-                carritoDeProductos.forEach(p => subtotalGeneral += (p.unit_price * p.quantity));
-                const nuevoPedido = {
-                    usuarioId: sesionUsuario ? sesionUsuario.uid : 'Invitado',
-                    productos: carritoDeProductos,
-                    subtotal: subtotalGeneral,
-                    envio: costoEnvio,
-                    total: subtotalGeneral + costoEnvio,
-                    direccion: direccion,
-                    instrucciones: instrucciones || 'Ninguna',
-                    metodoPago: 'Efectivo',
-                    estado: "Pendiente ⏳",
-                    fecha: firebase.firestore.FieldValue.serverTimestamp()
-                };
-                db.collection('pedidos').add(nuevoPedido).then(() => {
-                    alert(`¡Pedido Confirmado en Efectivo!\nDirección: ${direccion}`);
-                    carritoDeProductos = []; actualizarInterfazCarrito(); toggleSidebar();
-                }).catch((error) => { alert('Error base de datos: ' + error.message); });
+    const direccion = document.getElementById('checkout-address').value.trim();
+    const instrucciones = document.getElementById('checkout-instructions').value.trim();
+    if (!direccion) { alert("Por favor, ingresá una dirección."); return; }
+
+    let subtotalGeneral = 0;
+    carritoDeProductos.forEach(p => subtotalGeneral += (p.unit_price * p.quantity));
+    
+    // Feedback visual en el botón
+    const botonPagar = document.querySelector('#cart-view-checkout .btn-pagar');
+    const textoOriginal = botonPagar.textContent;
+    botonPagar.disabled = true;
+    botonPagar.textContent = "Procesando...";
+
+    const nuevoPedido = {
+        usuarioId: sesionUsuario ? sesionUsuario.uid : 'Invitado',
+        productos: carritoDeProductos,
+        subtotal: subtotalGeneral,
+        envio: costoEnvio,
+        total: subtotalGeneral + costoEnvio,
+        direccion: direccion,
+        instrucciones: instrucciones || 'Ninguna',
+        metodoPago: metodoSeleccionado === 'mp' ? 'Mercado Pago' : 'Efectivo',
+        estado: metodoSeleccionado === 'mp' ? "Pendiente de Pago 💳" : "Pendiente ⏳",
+        fecha: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    // 1. Guardamos SIEMPRE el pedido en Firebase
+    db.collection('pedidos').add(nuevoPedido).then(async (docRef) => {
+        
+        // 2. Si eligió Mercado Pago, lo redirigimos directo al checkout oficial
+        if (metodoSeleccionado === 'mp') {
+            try {
+                const response = await fetch('/api/create-preference', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ items: carritoDeProductos })
+                });
+                const data = await response.json();
+                
+                if (data.init_point || data.id) {
+                    carritoDeProductos = [];
+                    actualizarInterfazCarrito();
+                    
+                    const urlRedireccion = data.init_point || `https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=${data.id}`;
+                    window.location.href = urlRedireccion;
+                } else {
+                    throw new Error("No se pudo obtener el enlace de pago.");
+                }
+            } catch (error) {
+                alert('Pedido guardado, pero falló Mercado Pago: ' + error.message);
+                botonPagar.disabled = false;
+                botonPagar.textContent = textoOriginal;
             }
+        } else {
+            // 3. Si eligió Efectivo, finaliza acá de forma normal
+            alert(`¡Pedido Confirmado en Efectivo!\nDirección: ${direccion}`);
+            carritoDeProductos = []; 
+            actualizarInterfazCarrito(); 
+            toggleSidebar();
+            botonPagar.disabled = false;
+            botonPagar.textContent = textoOriginal;
         }
+    }).catch((error) => {
+        alert('Hubo un problema con tu pedido: ' + error.message);
+        botonPagar.disabled = false;
+        botonPagar.textContent = textoOriginal;
+    });
+}
 
         function toggleAuthModal() { document.getElementById('auth-modal').classList.toggle('active'); }
 
