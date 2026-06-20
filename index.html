@@ -93,8 +93,12 @@
             <a href="#">Destacados</a>
             <a href="#">Combos</a>
         </nav>
-        <button class="carrito-btn" onclick="toggleSidebar()">
-            Carrito <span class="cart-badge" id="cart-count">0</span>
+                <button class="carrito-btn" onclick="toggleSidebar()" style="position: relative; background: none; border: none; cursor: pointer; display: flex; align-items: center; padding: 6px;">
+            <!-- Tu nuevo ícono de carrito -->
+            <img src="carrito.png" alt="Carrito" style="height: 26px; width: auto; display: block;">
+            
+            <!-- El globito con el número (estilo notificación) -->
+            <span class="cart-badge" id="cart-count" style="position: absolute; top: -3px; right: -6px; background-color: #e21b5a; color: white; font-size: 0.7rem; font-weight: 700; min-width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0 4px;">0</span>
         </button>
     </header>
     
