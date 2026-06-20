@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <script src="https://sdk.mercadopago.com/js/v2"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Al Punto - Premium Store</title>
+    
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
     <style>
-        /* Paleta de colores inspirada en Samsung (Alto contraste y minimalismo) */
         :root {
             --samsung-black: #000000;
             --samsung-white: #ffffff;
@@ -17,414 +20,73 @@
             --samsung-blue: #1428a0; 
             --border-light: #dadada;
         }
-
-        /* --- ESTILOS TIPO APP (CANTIDAD Y BOTÓN FIJO) --- */
-        .quantity-control {
-            display: flex;
-            align-items: center;
-            background-color: #f3f4f6;
-            border-radius: 20px;
-            padding: 4px 12px;
-            gap: 14px;
-            width: fit-content;
-        }
-
-        .qty-btn {
-            background: none;
-            border: none;
-            font-size: 1rem;
-            cursor: pointer;
-            color: #111111;
-            font-weight: bold;
-            padding: 0 4px;
-        }
-
-        .qty-number {
-            font-weight: 700;
-            font-size: 0.95rem;
-            color: #111111;
-        }
-
-        .cart-footer {
-            padding: 20px;
-            border-top: 1px solid #e5e7eb;
-            background-color: #ffffff;
-            margin-top: auto;
-        }
-
-        .subtotal-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .subtotal-label {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #111111;
-        }
-
-        .subtotal-amount {
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: #111111;
-        }
-
-        .btn-pagar {
-            width: 100%;
-            background-color: #e21b5a;
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 25px;
-            font-size: 1.05rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
-
-        .btn-pagar:hover {
-            background-color: #c7124b;
-        }
-        
-        * {
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: var(--samsung-white);
-            color: var(--samsung-black);
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* Barra de navegación ultralimpia */
-        header {
-            background-color: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-light);
-            padding: 0 5%;
-            height: 70px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            text-transform: lowercase;
-            cursor: pointer;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--samsung-black);
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .nav-links a:hover {
-            color: var(--samsung-gray-text);
-        }
-
-        .carrito-btn {
-            background: none;
-            border: none;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .cart-badge {
-            background-color: var(--samsung-black);
-            color: var(--samsung-white);
-            font-size: 0.75rem;
-            padding: 2px 7px;
-            border-radius: 10px;
-        }
-
-        /* Banner Principal Interactivo (Hero Banner) */
-        .hero-banner {
-            width: 100%;
-            height: 75vh;
-            background-color: var(--samsung-black);
-            color: var(--samsung-white);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-banner h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin: 0 0 1rem 0;
-            letter-spacing: -1px;
-        }
-
-        .hero-banner p {
-            font-size: 1.25rem;
-            color: #86868b;
-            margin: 0 0 2rem 0;
-            max-width: 600px;
-        }
-
-        .hero-cta {
-            background-color: var(--samsung-white);
-            color: var(--samsung-black);
-            border: none;
-            padding: 12px 30px;
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        .hero-cta:hover {
-            opacity: 0.9;
-        }
-
-        /* Selector de categorías flotante */
-        .category-nav {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin: 3rem auto 1.5rem auto;
-            max-width: 800px;
-            border-bottom: 1px solid var(--border-light);
-            padding-bottom: 10px;
-        }
-
-        .category-tab {
-            background: none;
-            border: none;
-            font-size: 1rem;
-            color: var(--samsung-gray-text);
-            cursor: pointer;
-            padding: 5px 10px;
-            position: relative;
-            font-weight: 500;
-        }
-
-        .category-tab.active {
-            color: var(--samsung-black);
-            font-weight: 700;
-        }
-
-        .category-tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: -11px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: var(--samsung-black);
-        }
-
-        /* Grilla de productos */
-        .store-grid {
-            max-width: 1440px;
-            margin: 0 auto 5rem auto;
-            padding: 0 4%;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 1.5rem;
-        }
-
-        /* Tarjeta de producto */
-        .product-card {
-            background-color: var(--samsung-gray-bg);
-            border-radius: 20px;
-            padding: 2.5rem 2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            transition: background-color 0.3s;
-        }
-
-        .product-card:hover {
-            background-color: #ededed;
-        }
-
-        .product-image-box {
-            width: 100%;
-            height: 220px;
-            background-color: transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-            margin-bottom: 2rem;
-        }
-
-        .product-badge {
-            background-color: var(--samsung-black);
-            color: var(--samsung-white);
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 10px;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-        }
-
-        .product-card h3 {
-            margin: 0 0 0.5rem 0;
-            font-size: 1.4rem;
-            font-weight: 600;
-            letter-spacing: -0.3px;
-        }
-
-        .product-card .specs {
-            color: var(--samsung-gray-text);
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
-            height: 40px;
-        }
-
-        .product-card .price {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-        }
-
-        .btn-buy {
-            background-color: var(--samsung-black);
-            color: var(--samsung-white);
-            border: none;
-            padding: 10px 24px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            width: 100%;
-            max-width: 200px;
-            transition: background-color 0.2s;
-        }
-
-        .btn-buy:hover {
-            background-color: #333333;
-        }
-
-        /* Notificación Minimalista */
-        #toast {
-            position: fixed;
-            top: 90px;
-            right: 20px;
-            background-color: var(--samsung-black);
-            color: var(--samsung-white);
-            padding: 12px 24px;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transform: translateX(150%);
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 2000;
-        }
-
-        #toast.visible {
-            transform: translateX(0);
-        }
-
-        /* --- ESTILOS DEL CARRITO LATERAL --- */
-        .cart-sidebar {
-            position: fixed;
-            top: 0;
-            right: -100%;
-            width: 85%;
-            max-width: 380px;
-            height: 100%;
-            background-color: var(--samsung-white, #ffffff);
-            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-            z-index: 9999;
-            transition: right 0.3s ease-in-out;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .cart-sidebar.active {
-            right: 0; 
-        }
-
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 9998;
-            display: none;
-        }
-
-        .sidebar-overlay.active {
-            display: block;
-        }
-
-        .cart-sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid #dadada;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .cart-sidebar-header h3 {
-            margin: 0;
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-
-        .close-sidebar-btn {
-            background: none;
-            border: none;
-            font-size: 1.8rem;
-            cursor: pointer;
-            color: #000;
-        }
-
-        .cart-sidebar-content {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .empty-cart-msg {
-            text-align: center;
-            color: #777;
-            margin-top: 40px;
-            font-size: 0.95rem;
-        }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+        body { margin: 0; padding: 0; background-color: var(--samsung-white); color: var(--samsung-black); -webkit-font-smoothing: antialiased; }
+        header { background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-light); padding: 0 5%; height: 70px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; text-transform: lowercase; cursor: pointer; }
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-links a { text-decoration: none; color: var(--samsung-black); font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--samsung-gray-text); }
+        .carrito-btn { background: none; border: none; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .cart-badge { background-color: var(--samsung-black); color: var(--samsung-white); font-size: 0.75rem; padding: 2px 7px; border-radius: 10px; }
+        .hero-banner { width: 100%; height: 75vh; background-color: var(--samsung-black); color: var(--samsung-white); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 2rem; position: relative; overflow: hidden; }
+        .hero-banner h1 { font-size: 3.5rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -1px; }
+        .hero-banner p { font-size: 1.25rem; color: #86868b; margin: 0 0 2rem 0; max-width: 600px; }
+        .hero-cta { background-color: var(--samsung-white); color: var(--samsung-black); border: none; padding: 12px 30px; border-radius: 30px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: opacity 0.2s; }
+        .hero-cta:hover { opacity: 0.9; }
+        .category-nav { display: flex; justify-content: center; gap: 1.5rem; margin: 3rem auto 1.5rem auto; max-width: 800px; border-bottom: 1px solid var(--border-light); padding-bottom: 10px; }
+        .category-tab { background: none; border: none; font-size: 1rem; color: var(--samsung-gray-text); cursor: pointer; padding: 5px 10px; position: relative; font-weight: 500; }
+        .category-tab.active { color: var(--samsung-black); font-weight: 700; }
+        .category-tab.active::after { content: ''; position: absolute; bottom: -11px; left: 0; width: 100%; height: 2px; background-color: var(--samsung-black); }
+        .store-grid { max-width: 1440px; margin: 0 auto 5rem auto; padding: 0 4%; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+        .product-card { background-color: var(--samsung-gray-bg); border-radius: 20px; padding: 2.5rem 2rem; display: flex; flex-direction: column; align-items: center; text-align: center; transition: background-color 0.3s; }
+        .product-card:hover { background-color: #ededed; }
+        .product-image-box { width: 100%; height: 220px; background-color: transparent; display: flex; align-items: center; justify-content: center; font-size: 4rem; margin-bottom: 2rem; }
+        .product-badge { background-color: var(--samsung-black); color: var(--samsung-white); font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 10px; margin-bottom: 1rem; text-transform: uppercase; }
+        .product-card h3 { margin: 0 0 0.5rem 0; font-size: 1.4rem; font-weight: 600; letter-spacing: -0.3px; }
+        .product-card .specs { color: var(--samsung-gray-text); font-size: 0.9rem; margin-bottom: 1.5rem; height: 40px; }
+        .product-card .price { font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem; }
+        .btn-buy { background-color: var(--samsung-black); color: var(--samsung-white); border: none; padding: 10px 24px; border-radius: 20px; font-weight: 600; font-size: 0.85rem; cursor: pointer; width: 100%; max-width: 200px; transition: background-color 0.2s; }
+        .btn-buy:hover { background-color: #333333; }
+        .quantity-control { display: flex; align-items: center; background-color: #f3f4f6; border-radius: 20px; padding: 4px 12px; gap: 14px; width: fit-content; }
+        .qty-btn { background: none; border: none; font-size: 1rem; cursor: pointer; color: #111111; font-weight: bold; padding: 0 4px; }
+        .qty-number { font-weight: 700; font-size: 0.95rem; color: #111111; }
+        .cart-footer { padding: 20px; border-top: 1px solid #e5e7eb; background-color: #ffffff; margin-top: auto; }
+        .subtotal-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .subtotal-label { font-size: 1.1rem; font-weight: 700; color: #111111; }
+        .subtotal-amount { font-size: 1.2rem; font-weight: 800; color: #111111; }
+        .btn-pagar { width: 100%; background-color: #e21b5a; color: white; border: none; padding: 14px; border-radius: 25px; font-size: 1.05rem; font-weight: 700; cursor: pointer; transition: background 0.2s ease; }
+        .btn-pagar:hover { background-color: #c7124b; }
+        #toast { position: fixed; top: 90px; right: 20px; background-color: var(--samsung-black); color: var(--samsung-white); padding: 12px 24px; border-radius: 30px; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateX(150%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 2000; }
+        #toast.visible { transform: translateX(0); }
+        .cart-sidebar { position: fixed; top: 0; right: -100%; width: 85%; max-width: 380px; height: 100%; background-color: var(--samsung-white); box-shadow: -5px 0 15px rgba(0,0,0,0.1); z-index: 9999; transition: right 0.3s ease-in-out; display: flex; flex-direction: column; }
+        .cart-sidebar.active { right: 0; }
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 9998; display: none; }
+        .sidebar-overlay.active { display: block; }
+        .cart-sidebar-header { padding: 20px; border-bottom: 1px solid #dadada; display: flex; justify-content: space-between; align-items: center; }
+        .cart-sidebar-header h3 { margin: 0; font-size: 1.2rem; font-weight: 600; }
+        .close-sidebar-btn { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #000; }
+        .cart-sidebar-content { flex: 1; padding: 20px; overflow-y: auto; }
+        .empty-cart-msg { text-align: center; color: #777; margin-top: 40px; font-size: 0.95rem; }
+        .auth-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .auth-modal.active { display: flex; }
+        .auth-card { background-color: white; border-radius: 24px; width: 100%; max-width: 400px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative; text-align: left; }
+        .auth-card h3 { margin: 0 0 8px 0; font-size: 1.5rem; font-weight: 700; color: black; }
+        .auth-tabs { display: flex; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid #dadada; }
+        .auth-tab { background: none; border: none; padding: 10px 0; font-size: 0.95rem; cursor: pointer; color: #707070; font-weight: 500; position: relative; }
+        .auth-tab.active { color: black; font-weight: 700; }
+        .auth-tab.active::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background-color: black; }
+        .auth-input-group { margin-bottom: 15px; }
+        .auth-input-group label { display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; color: black; }
+        .auth-input { width: 100%; padding: 12px; border: 1px solid #dadada; border-radius: 12px; font-size: 0.95rem; outline: none; color: black; background: white; }
+        .auth-btn { width: 100%; background-color: black; color: white; border: none; padding: 14px; border-radius: 25px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .order-card { border: 1px solid #e5e7eb; border-radius: 14px; padding: 14px; margin-bottom: 10px; font-size: 0.85rem; background: #f9f9f9; }
     </style>
 </head>
 <body>
-
     <header>
-        <div class="logo" onclick="window.location.reload();" style="cursor: pointer; display: flex; align-items: center;">
-            <img src="logo.png" alt="Lumbut Logo" style="height: 55px; width: auto; display: block; object-fit: contain;">
+        <div class="logo" onclick="window.location.reload();">
+            <img src="logo.png" alt="Al Punto" style="height: 55px; width: auto; display: block; object-fit: contain;">
         </div>
         <nav class="nav-links">
             <a href="#">Inicio</a>
@@ -439,7 +101,7 @@
     <section class="hero-banner">
         <span style="color: var(--samsung-blue); font-weight: 700; font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;">Lanzamiento Exclusivo</span>
         <h1>Línea Signature</h1>
-        <p>Edición ultra premium de pastas artesanales y panificados listos para hornear. Elevá tus comidas diarias.</p>
+        <p>Edición ultra premium de pastas artesanales y panificados listos para hornear.</p>
         <button class="hero-cta" onclick="document.getElementById('store-section').scrollIntoView({behavior: 'smooth'})">Ver modelos</button>
     </section>
     
@@ -479,9 +141,7 @@
 
         <div id="seccion-pago" style="grid-column: 1 / -1; max-width: 450px; margin: 3rem auto; padding: 2.5rem; text-align: center; background-color: var(--samsung-gray-bg); border-radius: 20px; width: 100%;">
             <h3 style="margin-top: 0; font-size: 1.5rem;">Resumen de Orden</h3>
-            <p style="color: var(--samsung-gray-text); font-size: 0.95rem; margin-bottom: 2rem;">
-                Paga de forma 100% segura a través de Mercado Pago.
-            </p>
+            <p style="color: var(--samsung-gray-text); font-size: 0.95rem; margin-bottom: 2rem;">Paga de forma segura a través de Mercado Pago.</p>
             <div id="walletBrick_container"></div> 
         </div>
     </main>
@@ -489,19 +149,16 @@
     <div id="toast">Agregado al carrito</div>
 
     <div id="cart-sidebar" class="cart-sidebar">
-        
         <div id="cart-view-main" style="display: flex; flex-direction: column; height: 100%;">
             <div class="cart-sidebar-header">
                 <h3>Carrito de Compras</h3>
                 <button class="close-sidebar-btn" onclick="toggleSidebar()">&times;</button>
             </div>
-            
             <div class="cart-sidebar-content">
                 <div id="sidebar-cart-items">
                     <p class="empty-cart-msg">El carrito de compras está vacío</p>
                 </div>
             </div>
-            
             <div class="cart-footer">
                 <div class="subtotal-row">
                     <span class="subtotal-label">Subtotal</span>
@@ -517,486 +174,104 @@
                 <h3>Último paso</h3>
                 <button class="close-sidebar-btn" onclick="toggleSidebar()">&times;</button>
             </div>
-
             <div class="cart-sidebar-content" style="text-align: left; padding: 20px;">
                 <h4 style="margin: 0 0 12px 0; font-size: 1rem; font-weight: 700; color: black;">¿Cómo querés pagar?</h4>
-                <div style="display: flex; gap: 12px; margin-bottom: 25px; padding-bottom: 5px;">
-                    <div id="pay-mp" onclick="seleccionarMetodo('mp')" style="flex: 1; border: 2px solid var(--samsung-black); border-radius: 14px; padding: 14px; text-align: center; cursor: pointer; background: #fff; transition: all 0.2s;">
+                <div style="display: flex; gap: 12px; margin-bottom: 25px;">
+                    <div id="pay-mp" onclick="seleccionarMetodo('mp')" style="flex: 1; border: 2px solid var(--samsung-black); border-radius: 14px; padding: 14px; text-align: center; cursor: pointer; background: #fff;">
                         <div style="font-size: 1.4rem; margin-bottom: 4px;">💳</div>
-                        <strong style="font-size: 0.9rem; display: block; color: black;">Mercado Pago</strong>
+                        <strong style="font-size: 0.9rem; color: black;">Mercado Pago</strong>
                     </div>
-                    <div id="pay-cash" onclick="seleccionarMetodo('efectivo')" style="flex: 1; border: 1px solid var(--border-light); border-radius: 14px; padding: 14px; text-align: center; cursor: pointer; background: #fff; transition: all 0.2s;">
+                    <div id="pay-cash" onclick="seleccionarMetodo('efectivo')" style="flex: 1; border: 1px solid var(--border-light); border-radius: 14px; padding: 14px; text-align: center; cursor: pointer; background: #fff;">
                         <div style="font-size: 1.4rem; margin-bottom: 4px;">💵</div>
-                        <strong style="font-size: 0.9rem; display: block; color: black;">efectivo</strong>
+                        <strong style="font-size: 0.9rem; color: black;">Efectivo</strong>
                     </div>
                 </div>
-
                 <h4 style="margin: 0 0 15px 0; font-size: 1rem; font-weight: 700; color: black;">Datos de entrega</h4>
-                
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                    <span style="font-size: 1.2rem;">🛵</span>
-                    <div>
-                        <strong style="font-size: 0.9rem; display: block; color: black;">Delivery</strong>
-                        <span style="font-size: 0.8rem; color: var(--samsung-gray-text);">20-40 min</span>
-                    </div>
+                    <span>🛵</span>
+                    <div><strong style="font-size: 0.9rem; color: black;">Delivery</strong><span style="font-size: 0.8rem; color: var(--samsung-gray-text);">20-40 min</span></div>
                 </div>
-
                 <div style="margin-bottom: 15px;">
                     <label style="font-size: 0.8rem; font-weight: 700; display: block; margin-bottom: 6px; color: black;">Dirección de entrega</label>
-                    <input type="text" id="checkout-address" placeholder="Ingresá tu calle, número y depto" style="width: 100%; padding: 12px; border: 1px solid var(--border-light); border-radius: 10px; font-size: 0.9rem; outline: none; color: black; background: white;">
+                    <input type="text" id="checkout-address" placeholder="Calle, número y depto" style="width: 100%; padding: 12px; border: 1px solid var(--border-light); border-radius: 10px; background: white; color: black;">
                 </div>
-
                 <div style="margin-bottom: 25px;">
-                    <label style="font-size: 0.8rem; font-weight: 700; display: block; margin-bottom: 6px; color: black;">Instrucciones de entrega</label>
-                    <input type="text" id="checkout-instructions" placeholder="Ej: Portón negro, timbre B..." style="width: 100%; padding: 12px; border: 1px solid var(--border-light); border-radius: 10px; font-size: 0.9rem; outline: none; color: black; background: white;">
+                    <label style="font-size: 0.8rem; font-weight: 700; display: block; margin-bottom: 6px; color: black;">Instrucciones</label>
+                    <input type="text" id="checkout-instructions" placeholder="Ej: timbre B..." style="width: 100%; padding: 12px; border: 1px solid var(--border-light); border-radius: 10px; background: white; color: black;">
                 </div>
-
                 <h4 style="margin: 0 0 12px 0; font-size: 1rem; font-weight: 700; color: black;">Resumen</h4>
                 <div style="font-size: 0.9rem; background: #f9f9f9; padding: 15px; border-radius: 12px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <span style="color: var(--samsung-gray-text);">Productos</span>
-                        <span id="summary-products" style="font-weight: 600; color: black;">$ 0,00</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <span style="color: var(--samsung-gray-text);">Envío</span>
-                        <span style="font-weight: 600; color: black;">$ 1.799,00</span>
-                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span style="color: var(--samsung-gray-text);">Productos</span><span id="summary-products" style="font-weight: 600; color: black;">$ 0,00</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span style="color: var(--samsung-gray-text);">Envío</span><span style="font-weight: 600; color: black;">$ 1.799,00</span></div>
                 </div>
             </div>
-
-            <div class="cart-footer" style="background-color: #fff;">
-                <div class="subtotal-row">
-                    <span class="subtotal-label">Total</span>
-                    <span class="subtotal-amount" id="summary-total">$ 1.799,00</span>
-                </div>
-       <button class="btn-pagar" onclick="procesarPedidoFinal()">Pagar</button>
+            <div class="cart-footer">
+                <div class="subtotal-row"><span class="subtotal-label">Total</span><span class="subtotal-amount" id="summary-total">$ 1.799,00</span></div>
+                <button class="btn-pagar" onclick="procesarPedidoFinal()">Pagar</button>
             </div>
         </div>
     </div>
 
     <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-    <!-- Lógica JavaScript Unificada -->
-    <script>
+    <div class="auth-modal" id="auth-modal">
+        <div class="auth-card">
+            <button onclick="toggleAuthModal()" style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: black;">&times;</button>
+            <div id="auth-view-form">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" id="tab-login" onclick="cambiarAuthTab('login')">Ingresar</button>
+                    <button class="auth-tab" id="tab-register" onclick="cambiarAuthTab('register')">Crear Cuenta</button>
+                </div>
+                <div id="register-only-fields" style="display: none;">
+                    <div class="auth-input-group"><label>Nombre Completo</label><input type="text" id="auth-name" class="auth-input" placeholder="Tu nombre"></div>
+                </div>
+                <div class="auth-input-group"><label>Correo Electrónico</label><input type="email" id="auth-email" class="auth-input" placeholder="ejemplo@correo.com"></div>
+                <div class="auth-input-group"><label>Contraseña</label><input type="password" id="auth-password" class="auth-input" placeholder="••••••••"></div>
+                <button class="auth-btn" id="auth-submit-btn" onclick="simularLoginReal()">Entrar</button>
+            </div>
+            <div id="auth-view-profile" style="display: none; flex-direction: column;">
+                <h3>Mi Cuenta</h3>
+                <p style="margin: 0 0 20px 0; color: #707070; font-size: 0.9rem;" id="profile-welcome">¡Hola!</p>
+                <h4 style="margin: 10px 0 10px 0; font-size: 1rem; font-weight: 700; color: black;">Historial de Pedidos</h4>
+                <div id="orders-history" style="max-height: 220px; overflow-y: auto; margin-bottom: 20px; padding-right: 5px;">
+                    <p style="color:#707070; font-size:0.85rem; text-align:center;">Cargando pedidos...</p>
+                </div>
+                <button class="auth-btn" style="background-color: #e21b5a;" onclick="simularLogoutReal()">Cerrar Sesión</button>
+            </div>
+        </div>
+                        </div>
+            <script>
         let carritoDeProductos = [];
         const countBadge = document.getElementById('cart-count');
         const toast = document.getElementById('toast');
         let toastTimer;
         let metodoSeleccionado = 'mp';
         const costoEnvio = 1799;
-
-        // Inicializar Mercado Pago de forma segura
-        let mp;
-        try {
-            mp = new MercadoPago('APP_USR-b4108a49-fe76-472c-8308-20688f95f9e7', {
-                locale: 'es-AR'
-            });
-        } catch (e) {
-            console.error("Error al cargar SDK de Mercado Pago:", e);
-        }
-
-        // Sistema dinámico de pestañas (Filtro)
-        function filtrar(categoria, elementoBotón) {
-            document.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
-            elementoBotón.classList.add('active');
-
-            document.querySelectorAll('.product-card').forEach(card => {
-                if(categoria === 'todos' || card.getAttribute('data-category') === categoria) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
-        // Renderizar el botón oficial de Mercado Pago
-        async function renderizarBotonPago(preferenceId) {
-            if (!mp) return;
-            try {
-                const bricksBuilder = mp.bricks();
-                const container = document.getElementById('walletBrick_container');
-                container.innerHTML = ''; 
-
-                await bricksBuilder.create("wallet", "walletBrick_container", {
-                    initialization: {
-                        preferenceId: preferenceId,
-                    },
-                    customization: {
-                        texts: {
-                            valueProp: 'smart_option'
-                        }
-                    }
-                });
-            } catch (err) {
-                console.error("Error al crear el botón de pago:", err);
-            }
-        }
-
-        // Actualiza visualmente los productos dentro del panel del carrito
-        function actualizarInterfazCarrito() {
-            const contenedorItems = document.getElementById('sidebar-cart-items');
-            const txtSubtotal = document.getElementById('cart-subtotal');
-            
-            if (carritoDeProductos.length === 0) {
-                contenedorItems.innerHTML = '<p class="empty-cart-msg">El carrito de compras está vacío</p>';
-                if (txtSubtotal) txtSubtotal.textContent = '$ 0,00';
-                if (countBadge) countBadge.textContent = '0';
-                return;
-            }
-
-            let totalItems = 0;
-            let subtotalGeneral = 0;
-            let htmlContenido = '';
-
-            carritoDeProductos.forEach((prod, index) => {
-                totalItems += prod.quantity;
-                subtotalGeneral += prod.unit_price * prod.quantity;
-
-                htmlContenido += `
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px;">
-                        <div style="text-align: left;">
-                            <h4 style="margin: 0 0 5px 0; font-size: 0.95rem; font-weight: 600; color: #000000;">${prod.title}</h4>
-                            <span style="color: var(--samsung-gray-text); font-size: 0.85rem; font-weight: 700;">$${(prod.unit_price * prod.quantity).toLocaleString('es-AR')}</span>
-                        </div>
-                        <div class="quantity-control">
-                            <button class="qty-btn" onclick="cambiarCantidad(${index}, -1)">${prod.quantity === 1 ? '🗑️' : '-'}</button>
-                            <span class="qty-number">${prod.quantity}</span>
-                            <button class="qty-btn" onclick="cambiarCantidad(${index}, 1)">+</button>
-                        </div>
-                    </div>
-                `;
-            });
-
-            contenedorItems.innerHTML = htmlContenido;
-            if (countBadge) countBadge.textContent = totalItems;
-            if (txtSubtotal) txtSubtotal.textContent = `$ ${subtotalGeneral.toLocaleString('es-AR')}`;
-        }
-
-        // Controla las cantidades (+ / - / eliminar)
-        function cambiarCantidad(index, cambio) {
-            carritoDeProductos[index].quantity += cambio;
-            if (carritoDeProductos[index].quantity <= 0) {
-                carritoDeProductos.splice(index, 1);
-            }
-            actualizarInterfazCarrito();
-            
-            if (carritoDeProductos.length > 0) {
-                activarCheckoutReal();
-            } else {
-                const container = document.getElementById('walletBrick_container');
-                if (container) container.innerHTML = '';
-            }
-        }
-
-        // Conexión dinámica con tu API de Mercado Pago usando todo el carrito
-        async function activarCheckoutReal() {
-            if (carritoDeProductos.length === 0) return;
-
-            try {
-                const response = await fetch('/api/create-preference', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ items: carritoDeProductos })
-                });
-                
-                const data = await response.json();
-                if (data.id) {
-                    renderizarBotonPago(data.id);
-                }
-            } catch (error) {
-                console.error("Error de red:", error);
-            }
-        }
-
-        // Función que se activa al tocar "Comprar" en el catálogo
-        function comprar(nombre) {
-            let precio = 4200;
-            if (nombre === 'Ravioloni Di Agnello') precio = 6800;
-            if (nombre === 'Tapas de Hojaldre Real') precio = 2400;
-
-            const itemExistente = carritoDeProductos.find(p => p.title === nombre);
-            if (itemExistente) {
-                itemExistente.quantity++;
-            } else {
-                carritoDeProductos.push({ title: nombre, quantity: 1, unit_price: precio });
-            }
-
-            actualizarInterfazCarrito();
-
-            if (toast) {
-                toast.innerHTML = `🛒 Se añadió <strong>${nombre}</strong> al carrito.`;
-                toast.classList.add('visible');
-                clearTimeout(toastTimer);
-                toastTimer = setTimeout(() => {
-                    toast.classList.remove('visible');
-                }, 2500);
-            }
-
-            activarCheckoutReal();
-        }
-
-        // Abre y cierra el panel lateral reseteando la vista inicial
-        function toggleSidebar() {
-            document.getElementById('cart-sidebar').classList.toggle('active');
-            document.getElementById('sidebar-overlay').classList.toggle('active');
-            volverAlCarrito(); // Siempre inicia en la lista de productos
-        }
-
-        // Pasa a la pantalla del "Último Paso" calculando los costos exactos
-        function goToCheckout() {
-            if (carritoDeProductos.length === 0) return;
-            
-            document.getElementById('cart-view-main').style.display = 'none';
-            document.getElementById('cart-view-checkout').style.display = 'flex';
-            
-            // Cálculos dinámicos
-            let subtotalGeneral = 0;
-            carritoDeProductos.forEach(p => subtotalGeneral += (p.unit_price * p.quantity));
-            let totalFinal = subtotalGeneral + costoEnvio;
-
-            // Inyectar datos en el resumen limpio
-            document.getElementById('summary-products').textContent = `$ ${subtotalGeneral.toLocaleString('es-AR')}`;
-            document.getElementById('summary-total').textContent = `$ ${totalFinal.toLocaleString('es-AR')}`;
-        }
-
-        // Regresar a la lista de ítems del carrito
-        function volverAlCarrito() {
-            document.getElementById('cart-view-checkout').style.display = 'none';
-            document.getElementById('cart-view-main').style.display = 'flex';
-        }
-
-        // Cambiar la selección estética de los botones de pago
-        function seleccionarMetodo(metodo) {
-            metodoSeleccionado = metodo;
-            const btnMp = document.getElementById('pay-mp');
-            const btnCash = document.getElementById('pay-cash');
-
-            if (metodo === 'mp') {
-                btnMp.style.borderColor = 'var(--samsung-black)';
-                btnMp.style.borderWidth = '2px';
-                btnCash.style.borderColor = 'var(--border-light)';
-                btnCash.style.borderWidth = '1px';
-            } else {
-                btnCash.style.borderColor = 'var(--samsung-black)';
-                btnCash.style.borderWidth = '2px';
-                btnMp.style.borderColor = 'var(--border-light)';
-                btnMp.style.borderWidth = '1px';
-            }
-        }
-
-        // Procesamiento del botón final "Pagar"
-        function procesarPedidoFinal() {
-            const direccion = document.getElementById('checkout-address').value.trim();
-            const instrucciones = document.getElementById('checkout-instructions').value.trim();
-
-            if (!direccion) {
-                alert("Por favor, ingresá una dirección para que podamos enviarte el pedido.");
-                return;
-            }
-
-            if (metodoSeleccionado === 'mp') {
-                // Flujo Mercado Pago: Cierra el carro y lleva directo al bloque oficial inferior
-                toggleSidebar();
-                document.getElementById('seccion-pago').scrollIntoView({ behavior: 'smooth' });
-                alert(`Dirección registrada: ${direccion}. Procedé a abonar con el botón de Mercado Pago abajo de la tienda.`);
-            } else {
-                // Flujo Efectivo
-// 1. Mandamos los datos en vivo a tu base de datos de Firebase
-firebase.firestore().collection('pedidos').add({
-    direccion: direccion,
-    instrucciones: instrucciones || 'Ninguna',
-    productos: carritoDeProductos,
-    metodo: 'Efectivo',
-    fecha: new Date().toLocaleString('es-AR')
-})
-.then(() => {
-    // 2. Si Firebase responde que se guardó bien, recién ahí muestra el éxito
-    alert(`¡Pedido Confirmado y enviado a Firebase con éxito!\n\nMétodo: efectivo al recibir\nDirección: ${direccion}\n\nMuchas gracias por elegir Al Punto!`);
-    
-    // 3. Limpiamos el carrito
-    carritoDeProductos = [];
-    actualizarInterfazCarrito();
-    toggleSidebar();
-})
-.catch((error) => {
-    // Si algo falla (por ejemplo, falta internet), te avisa acá
-    alert('Error al conectar con la base de datos: ' + error.message);
-});
-
-            }
-        }
-    </script>
-</body>
-</html>
-    <!-- ========================================== -->
-    <!-- INTERFAZ DE INICIO DE SESIÓN Y HISTORIAL -->
-    <!-- ========================================== -->
-    <style>
-        /* Estilos del Modal de Cuentas */
-        .auth-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(5px);
-            z-index: 10000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .auth-modal.active {
-            display: flex;
-        }
-        .auth-card {
-            background-color: white;
-            border-radius: 24px;
-            width: 100%;
-            max-width: 400px;
-            padding: 30px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            position: relative;
-            text-align: left;
-        }
-        .auth-card h3 {
-            margin: 0 0 8px 0;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: black;
-        }
-        .auth-tabs {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #dadada;
-        }
-        .auth-tab {
-            background: none;
-            border: none;
-            padding: 10px 0;
-            font-size: 0.95rem;
-            cursor: pointer;
-            color: #707070;
-            font-weight: 500;
-            position: relative;
-        }
-        .auth-tab.active {
-            color: black;
-            font-weight: 700;
-        }
-        .auth-tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: black;
-        }
-        .auth-input-group {
-            margin-bottom: 15px;
-        }
-        .auth-input-group label {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 700;
-            margin-bottom: 6px;
-            color: black;
-        }
-        .auth-input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #dadada;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            outline: none;
-            color: black;
-            background: white;
-        }
-        .auth-btn {
-            width: 100%;
-            background-color: black;
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 25px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .order-card {
-            border: 1px solid #e5e7eb;
-            border-radius: 14px;
-            padding: 14px;
-            margin-bottom: 10px;
-            font-size: 0.85rem;
-            background: #f9f9f9;
-        }
-    </style>
-
-    <!-- Estructura de la Ventana de Login/Perfil -->
-    <div class="auth-modal" id="auth-modal">
-        <div class="auth-card">
-            <button onclick="toggleAuthModal()" style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: black;">&times;</button>
-            
-            <!-- FORMULARIO: INICIAR SESIÓN / REGISTRO -->
-            <div id="auth-view-form">
-                <div class="auth-tabs">
-                    <button class="auth-tab active" id="tab-login" onclick="cambiarAuthTab('login')">Ingresar</button>
-                    <button class="auth-tab" id="tab-register" onclick="cambiarAuthTab('register')">Crear Cuenta</button>
-                </div>
-
-                <div id="register-only-fields" style="display: none;">
-                    <div class="auth-input-group">
-                        <label>Nombre Completo</label>
-                        <input type="text" id="auth-name" class="auth-input" placeholder="Tu nombre">
-                    </div>
-                </div>
-
-                <div class="auth-input-group">
-                    <label>Correo Electrónico</label>
-                    <input type="email" id="auth-email" class="auth-input" placeholder="ejemplo@correo.com">
-                </div>
-
-                <div class="auth-input-group">
-                    <label>Contraseña</label>
-                    <input type="password" id="auth-password" class="auth-input" placeholder="••••••••">
-                </div>
-
-                <button class="auth-btn" id="auth-submit-btn" onclick="simularLoginReal()">Entrar</button>
-            </div>
-
-            <!-- VISTA: PERFIL DE USUARIO Y HISTORIAL -->
-            <div id="auth-view-profile" style="display: none; flex-direction: column;">
-                <h3>Mi Cuenta</h3>
-                <p style="margin: 0 0 20px 0; color: #707070; font-size: 0.9rem;" id="profile-welcome">¡Hola de nuevo!</p>
-                
-                <h4 style="margin: 10px 0 10px 0; font-size: 1rem; font-weight: 700; color: black;">Historial de Pedidos</h4>
-                <div id="orders-history" style="max-height: 220px; overflow-y: auto; margin-bottom: 20px; padding-right: 5px;">
-                    <!-- Pedido Demo -->
-                    <div class="order-card">
-                        <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 6px; color: black;">
-                            <span>Orden #2941</span>
-                            <span style="color: #1428a0;">En camino 🛵</span>
-                        </div>
-                        <div style="color: #707070; font-size: 0.8rem; margin-bottom: 4px;">1x Prepizzas Neolíticas, 1x Ravioloni</div>
-                        <div style="font-weight: 700; color: black; border-top: 1px dashed #dadada; padding-top: 4px; margin-top: 4px;">Total: $12.799</div>
-                    </div>
-                </div>
-
-                <button class="auth-btn" style="background-color: #e21b5a;" onclick="simularLogoutReal()">Cerrar Sesión</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
         let sesionUsuario = null;
         let modoActual = 'login';
 
-        // Pone automáticamente el botón "Mi Cuenta" en la barra de arriba al cargar
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyATOJIKqxBviebi1Cl7y5rLDgBxchC7TL0",
+            authDomain: "alpunto-efd39.firebaseapp.com",
+            projectId: "alpunto-efd39",
+            storageBucket: "alpunto-efd39.firebasestorage.app",
+            messagingSenderId: "885569142373",
+            appId: "1:885569142373:web:9965535202fda46d0f508c",
+            measurementId: "G-4TR7920KYB"
+        };
+
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let mp;
+        try {
+            mp = new MercadoPago('APP_USR-b4108a49-fe76-472c-8308-20688f95f9e7', { locale: 'es-AR' });
+        } catch (e) {
+            console.error("Error Mercado Pago SDK:", e);
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
             const barraNavegacion = document.querySelector("header .nav-links");
             if (barraNavegacion) {
@@ -1005,249 +280,247 @@ firebase.firestore().collection('pedidos').add({
                 linkCuenta.id = "nav-account-btn";
                 linkCuenta.textContent = "Mi Cuenta";
                 linkCuenta.style.fontWeight = "600";
-                linkCuenta.onclick = (e) => {
-                    e.preventDefault();
-                    toggleAuthModal();
-                };
+                linkCuenta.onclick = (e) => { e.preventDefault(); toggleAuthModal(); };
                 barraNavegacion.appendChild(linkCuenta);
             }
         });
 
-        function toggleAuthModal() {
-            document.getElementById('auth-modal').classList.toggle('active');
-            comprobarEstadoPerfil();
-        }
-
-        function cambiarAuthTab(modo) {
-            modoActual = modo;
-            const tabIn = document.getElementById('tab-login');
-            const tabReg = document.getElementById('tab-register');
-            const camposReg = document.getElementById('register-only-fields');
-            const btnConfirmar = document.getElementById('auth-submit-btn');
-
-            if (modo === 'login') {
-                tabIn.classList.add('active');
-                tabReg.classList.remove('active');
-                camposReg.style.display = 'none';
-                btnConfirmar.textContent = 'Entrar';
-            } else {
-                tabReg.classList.add('active');
-                tabIn.classList.remove('active');
-                camposReg.style.display = 'block';
-                btnConfirmar.textContent = 'Registrarse';
-            }
-        }
-
-        function comprobarEstadoPerfil() {
-            const vistaFormulario = document.getElementById('auth-view-form');
-            const vistaPerfil = document.getElementById('auth-view-profile');
-            const btnMenu = document.getElementById('nav-account-btn');
-
-            if (sesionUsuario) {
-                vistaFormulario.style.display = 'none';
-                vistaPerfil.style.display = 'flex';
-                document.getElementById('profile-welcome').textContent = `Conectado como: ${sesionUsuario.email}`;
-                if (btnMenu) btnMenu.textContent = "Mi Perfil 👤";
-            } else {
-                vistaFormulario.style.display = 'block';
-                vistaPerfil.style.display = 'none';
-                if (btnMenu) btnMenu.textContent = "Mi Cuenta";
-            }
-        }
-
-        // Simulación visual antes de meter la base de datos Firebase
-        function simularLoginReal() {
-            const correo = document.getElementById('auth-email').value.trim();
-            if (!correo) {
-                alert("Por favor, poné un correo electrónico válido.");
-                return;
-            }
-            sesionUsuario = { email: correo };
-            comprobarEstadoPerfil();
-            alert("Sesión iniciada (Modo de prueba visual).");
-            toggleAuthModal();
-        }
-
-        function simularLogoutReal() {
-            sesionUsuario = null;
-            comprobarEstadoPerfil();
-            alert("Sesión cerrada.");
-            toggleAuthModal();
-        }
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
-    <script>
-        // 1. Configuración de tu base de datos (Se cambia más adelante)
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyATOJIKqxBviebi1Cl7y5rLDgBxchC7TL0",
-  authDomain: "alpunto-efd39.firebaseapp.com",
-  projectId: "alpunto-efd39",
-  storageBucket: "alpunto-efd39.firebasestorage.app",
-  messagingSenderId: "885569142373",
-  appId: "1:885569142373:web:9965535202fda46d0f508c",
-  measurementId: "G-4TR7920KYB"
-};
-        const firebaseConfig = {
-  apiKey: "AIzaSy...",
-  authDomain: "alpunto-efd39.firebaseapp.com",
-  projectId: "alpunto-efd39",
-  storageBucket: "alpunto-efd39.firebasestorage.app",
-  messagingSenderId: "885569142373",
-  appId: "1:885569142373:web:9965535202fde46d0f508c"
-};
-
-// >>> AGREGÁ ESTA LÍNEA JUSTO ACÁ ABAJO: <<<
-firebase.initializeApp(firebaseConfig);
-    
-        };
-
-        // Inicializar Firebase de forma segura
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        // 2. Escuchar en tiempo real el estado del usuario
         auth.onAuthStateChanged(user => {
             const vistaFormulario = document.getElementById('auth-view-form');
             const vistaPerfil = document.getElementById('auth-view-profile');
             const btnMenu = document.getElementById('nav-account-btn');
-
             if (user) {
                 sesionUsuario = user;
                 if(vistaFormulario) vistaFormulario.style.display = 'none';
                 if(vistaPerfil) vistaPerfil.style.display = 'flex';
-                
-                const txtWelcome = document.getElementById('profile-welcome');
-                if(txtWelcome) txtWelcome.textContent = `Conectado como: ${user.email}`;
+                if(document.getElementById('profile-welcome')) document.getElementById('profile-welcome').textContent = `Conectado: ${user.email}`;
                 if (btnMenu) btnMenu.textContent = "Mi Perfil 👤";
-                
                 cargarHistorialPedidos(user.uid);
             } else {
                 sesionUsuario = null;
                 if(vistaFormulario) vistaFormulario.style.display = 'block';
                 if(vistaPerfil) vistaPerfil.style.display = 'none';
                 if (btnMenu) btnMenu.textContent = "Mi Cuenta";
+                if(document.getElementById('orders-history')) document.getElementById('orders-history').innerHTML = '<p style="color:#707070; font-size:0.85rem; text-align:center;">Iniciá sesión para ver tus compras.</p>';
             }
         });
 
-        // 3. Conexión Real para el botón "Entrar" / "Registrarse"
+        function filtrar(categoria, elementoBotón) {
+            document.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
+            elementoBotón.classList.add('active');
+            document.querySelectorAll('.product-card').forEach(card => {
+                card.style.display = (categoria === 'todos' || card.getAttribute('data-category') === categoria) ? 'flex' : 'none';
+            });
+        }
+
+        async function renderizarBotonPago(preferenceId) {
+            if (!mp) return;
+            try {
+                const bricksBuilder = mp.bricks();
+                const container = document.getElementById('walletBrick_container');
+                container.innerHTML = ''; 
+                await bricksBuilder.create("wallet", "walletBrick_container", {
+                    initialization: { preferenceId: preferenceId },
+                    customization: { texts: { valueProp: 'smart_option' } }
+                });
+            } catch (err) { console.error("Error al crear Brick:", err); }
+        }
+
+        function actualizarInterfazCarrito() {
+            const contenedorItems = document.getElementById('sidebar-cart-items');
+            const txtSubtotal = document.getElementById('cart-subtotal');
+            if (carritoDeProductos.length === 0) {
+                contenedorItems.innerHTML = '<p class="empty-cart-msg">El carrito de compras está vacío</p>';
+                if (txtSubtotal) txtSubtotal.textContent = '$ 0,00';
+                if (countBadge) countBadge.textContent = '0';
+                return;
+            }
+            let totalItems = 0;
+            let subtotalGeneral = 0;
+            let htmlContenido = '';
+            carritoDeProductos.forEach((prod, index) => {
+                totalItems += prod.quantity;
+                subtotalGeneral += prod.unit_price * prod.quantity;
+                htmlContenido += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px;">
+                        <div style="text-align: left;">
+                            <h4 style="margin: 0 0 5px 0; font-size: 0.95rem; font-weight: 600; color: black;">${prod.title}</h4>
+                            <span style="color: var(--samsung-gray-text); font-size: 0.85rem; font-weight: 700;">$${(prod.unit_price * prod.quantity).toLocaleString('es-AR')}</span>
+                        </div>
+                        <div class="quantity-control">
+                            <button class="qty-btn" onclick="cambiarCantidad(${index}, -1)">${prod.quantity === 1 ? '🗑️' : '-'}</button>
+                            <span class="qty-number">${prod.quantity}</span>
+                            <button class="qty-btn" onclick="cambiarCantidad(${index}, 1)">+</button>
+                        </div>
+                    </div>`;
+            });
+            contenedorItems.innerHTML = htmlContenido;
+            if (countBadge) countBadge.textContent = totalItems;
+            if (txtSubtotal) txtSubtotal.textContent = `$ ${subtotalGeneral.toLocaleString('es-AR')}`;
+        }
+
+        function cambiarCantidad(index, cambio) {
+            carritoDeProductos[index].quantity += cambio;
+            if (carritoDeProductos[index].quantity <= 0) carritoDeProductos.splice(index, 1);
+            actualizarInterfazCarrito();
+            if (carritoDeProductos.length > 0) activarCheckoutReal();
+            else if(document.getElementById('walletBrick_container')) document.getElementById('walletBrick_container').innerHTML = '';
+        }
+
+        async function activarCheckoutReal() {
+            if (carritoDeProductos.length === 0) return;
+            try {
+                const response = await fetch('/api/create-preference', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ items: carritoDeProductos })
+                });
+                const data = await response.json();
+                if (data.id) renderizarBotonPago(data.id);
+            } catch (error) { console.error("Error preferencia MP:", error); }
+        }
+
+        function comprar(nombre) {
+            let precio = 4200;
+            if (nombre === 'Ravioloni Di Agnello') precio = 6800;
+            if (nombre === 'Tapas de Hojaldre Real') precio = 2400;
+            const itemExistente = carritoDeProductos.find(p => p.title === nombre);
+            if (itemExistente) itemExistente.quantity++;
+            else carritoDeProductos.push({ title: nombre, quantity: 1, unit_price: precio });
+            actualizarInterfazCarrito();
+            if (toast) {
+                toast.innerHTML = `🛒 Se añadió <strong>${nombre}</strong> al carrito.`;
+                toast.classList.add('visible');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => { toast.classList.remove('visible'); }, 2500);
+            }
+            activarCheckoutReal();
+        }
+
+        function toggleSidebar() {
+            document.getElementById('cart-sidebar').classList.toggle('active');
+            document.getElementById('sidebar-overlay').classList.toggle('active');
+            volverAlCarrito();
+        }
+
+        function goToCheckout() {
+            if (carritoDeProductos.length === 0) return;
+            document.getElementById('cart-view-main').style.display = 'none';
+            document.getElementById('cart-view-checkout').style.display = 'flex';
+            let subtotalGeneral = 0;
+            carritoDeProductos.forEach(p => subtotalGeneral += (p.unit_price * p.quantity));
+            let totalFinal = subtotalGeneral + costoEnvio;
+            document.getElementById('summary-products').textContent = `$ ${subtotalGeneral.toLocaleString('es-AR')}`;
+            document.getElementById('summary-total').textContent = `$ ${totalFinal.toLocaleString('es-AR')}`;
+        }
+
+        function volverAlCarrito() {
+            document.getElementById('cart-view-checkout').style.display = 'none';
+            document.getElementById('cart-view-main').style.display = 'flex';
+        }
+
+        function seleccionarMetodo(metodo) {
+            metodoSeleccionado = metodo;
+            const btnMp = document.getElementById('pay-mp');
+            const btnCash = document.getElementById('pay-cash');
+            if (metodo === 'mp') {
+                btnMp.style.borderColor = 'var(--samsung-black)'; btnMp.style.borderWidth = '2px';
+                btnCash.style.borderColor = 'var(--border-light)'; btnCash.style.borderWidth = '1px';
+            } else {
+                btnCash.style.borderColor = 'var(--samsung-black)'; btnCash.style.borderWidth = '2px';
+                btnMp.style.borderColor = 'var(--border-light)'; btnMp.style.borderWidth = '1px';
+            }
+        }
+
+        function procesarPedidoFinal() {
+            const direccion = document.getElementById('checkout-address').value.trim();
+            const instrucciones = document.getElementById('checkout-instructions').value.trim();
+            if (!direccion) { alert("Por favor, ingresá una dirección."); return; }
+            if (metodoSeleccionado === 'mp') {
+                toggleSidebar();
+                document.getElementById('seccion-pago').scrollIntoView({ behavior: 'smooth' });
+                alert(`Dirección registrada. Procedé a pagar abajo con Mercado Pago.`);
+            } else {
+                let subtotalGeneral = 0;
+                carritoDeProductos.forEach(p => subtotalGeneral += (p.unit_price * p.quantity));
+                const nuevoPedido = {
+                    usuarioId: sesionUsuario ? sesionUsuario.uid : 'Invitado',
+                    productos: carritoDeProductos,
+                    subtotal: subtotalGeneral,
+                    envio: costoEnvio,
+                    total: subtotalGeneral + costoEnvio,
+                    direccion: direccion,
+                    instrucciones: instrucciones || 'Ninguna',
+                    metodoPago: 'Efectivo',
+                    estado: "Pendiente ⏳",
+                    fecha: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                db.collection('pedidos').add(nuevoPedido).then(() => {
+                    alert(`¡Pedido Confirmado en Efectivo!\nDirección: ${direccion}`);
+                    carritoDeProductos = []; actualizarInterfazCarrito(); toggleSidebar();
+                }).catch((error) => { alert('Error base de datos: ' + error.message); });
+            }
+        }
+
+        function toggleAuthModal() { document.getElementById('auth-modal').classList.toggle('active'); }
+
+        function cambiarAuthTab(modo) {
+            modoActual = modo;
+            const tabIn = document.getElementById('tab-login'); const tabReg = document.getElementById('tab-register');
+            const camposReg = document.getElementById('register-only-fields'); const btnConfirmar = document.getElementById('auth-submit-btn');
+            if (modo === 'login') {
+                tabIn.classList.add('active'); tabReg.classList.remove('active'); camposReg.style.display = 'none'; btnConfirmar.textContent = 'Entrar';
+            } else {
+                tabReg.classList.add('active'); tabIn.classList.remove('active'); camposReg.style.display = 'block'; btnConfirmar.textContent = 'Registrarse';
+            }
+        }
+
         async function simularLoginReal() {
             const correo = document.getElementById('auth-email').value.trim();
             const contrasena = document.getElementById('auth-password').value.trim();
-            const nombreInput = document.getElementById('auth-name');
-            const nombre = nombreInput ? nombreInput.value.trim() : "";
-
-            if (!correo || !contrasena) {
-                alert("Por favor, completá los campos de correo y contraseña.");
-                return;
-            }
-
+            const nombre = document.getElementById('auth-name') ? document.getElementById('auth-name').value.trim() : "";
+            if (!correo || !contrasena) { alert("Completá los campos básicos."); return; }
             try {
                 if (modoActual === 'login') {
                     await auth.signInWithEmailAndPassword(correo, contrasena);
-                    alert("¡Sesión iniciada con éxito!");
+                    alert("¡Sesión iniciada!");
                 } else {
-                    if (!nombre) { alert("Por favor, ingresá tu nombre."); return; }
+                    if (!nombre) { alert("Ingresá tu nombre."); return; }
                     const credencial = await auth.createUserWithEmailAndPassword(correo, contrasena);
-                    
                     await db.collection("usuarios").doc(credencial.user.uid).set({
-                        nombre: nombre,
-                        email: correo,
-                        fechaRegistro: firebase.firestore.FieldValue.serverTimestamp()
+                        nombre: nombre, email: correo, fechaRegistro: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    alert("¡Cuenta creada correctamente!");
+                    alert("¡Cuenta creada!");
                 }
                 toggleAuthModal();
-            } catch (error) {
-                console.error(error);
-                alert("Error: " + error.message);
-            }
+            } catch (error) { alert("Error: " + error.message); }
         }
 
-        // 4. Conexión Real para Cerrar Sesión
         async function simularLogoutReal() {
-            try {
-                await auth.signOut();
-                alert("Sesión cerrada.");
-                toggleAuthModal();
-            } catch (error) {
-                alert("Error al cerrar sesión.");
-            }
+            try { await auth.signOut(); alert("Sesión cerrada."); toggleAuthModal(); } catch (error) { alert("Error al salir."); }
         }
 
-        // 5. Guardar pedidos automáticamente en la base de datos
-        async function guardarPedidoEnFirebase(direccion, instrucciones, metodo) {
-            if (!sesionUsuario) return;
-
-            let subtotalGeneral = 0;
-            if (typeof carritoDeProductos !== 'undefined') {
-                carritoDeProductos.forEach(p => subtotalGeneral += (p.unit_price * p.quantity));
-            }
-
-            const nuevoPedido = {
-                usuarioId: sesionUsuario.uid,
-                productos: typeof carritoDeProductos !== 'undefined' ? carritoDeProductos : [],
-                subtotal: subtotalGeneral,
-                envio: typeof costoEnvio !== 'undefined' ? costoEnvio : 1799,
-                total: subtotalGeneral + (typeof costoEnvio !== 'undefined' ? costoEnvio : 1799),
-                direccion: direccion,
-                instrucciones: instrucciones,
-                metodoPago: metodo,
-                estado: "Pendiente ⏳",
-                fecha: firebase.firestore.FieldValue.serverTimestamp()
-            };
-
-            try {
-                await db.collection("pedidos").add(nuevoPedido);
-            } catch (error) {
-                console.error("No se pudo guardar el historial del pedido:", error);
-            }
-        }
-
-        // 6. Traer los pedidos reales desde Firestore
         function cargarHistorialPedidos(uid) {
             const contenedorHistorial = document.getElementById('orders-history');
             if(!contenedorHistorial) return;
-            
-            db.collection("pedidos")
-              .where("usuarioId", "==", uid)
-              .orderBy("fecha", "desc")
-              .onSnapshot(snapshot => {
-                  if (snapshot.empty) {
-                      contenedorHistorial.innerHTML = '<p style="color:#707070; font-size:0.85rem; text-align:center;">Aún no realizaste ningún pedido.</p>';
-                      return;
-                  }
-
-                  let html = '';
-                  snapshot.forEach(doc => {
-                      const pedido = doc.data();
-                      const listaProd = pedido.productos.map(p => `${p.quantity}x ${p.title}`).join(', ');
-                      
-                      html += `
-                          <div class="order-card">
-                              <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 6px; color: black;">
-                                  <span>Pedido #${doc.id.substring(0,5).toUpperCase()}</span>
-                                  <span style="color: #1428a0;">${pedido.estado}</span>
-                              </div>
-                              <div style="color: #707070; font-size: 0.8rem; margin-bottom: 4px;">${listaProd}</div>
-                              <div style="font-weight: 700; color: black; border-top: 1px dashed #dadada; padding-top: 4px; margin-top: 4px;">Total: $${pedido.total.toLocaleString('es-AR')}</div>
-                          </div>
-                      `;
-                  });
-                  contenedorHistorial.innerHTML = html;
-              }, error => {
-                  console.log("Error al cargar pedidos: ", error);
-              });
+            db.collection("pedidos").where("usuarioId", "==", uid).orderBy("fecha", "desc").onSnapshot(snapshot => {
+                if (snapshot.empty) { contenedorHistorial.innerHTML = '<p style="color:#707070; text-align:center; font-size:0.85rem;">Sin pedidos.</p>'; return; }
+                let html = '';
+                snapshot.forEach(doc => {
+                    const pedido = doc.data();
+                    const listaProd = pedido.productos ? pedido.productos.map(p => `${p.quantity}x ${p.title}`).join(', ') : 'Varios';
+                    html += `
+                        <div class="order-card">
+                            <div style="display: flex; justify-content: space-between; font-weight: 700; color: black;">
+                                <span>Pedido #${doc.id.substring(0,5).toUpperCase()}</span><span style="color: #1428a0;">${pedido.estado || 'Pendiente'}</span>
+                            </div>
+                            <div style="color: #707070; font-size: 0.8rem;">${listaProd}</div>
+                            <div style="font-weight: 700; color: black; border-top: 1px dashed #dadada; margin-top:4px;">Total: $${pedido.total.toLocaleString('es-AR')}</div>
+                        </div>`;
+                });
+                contenedorHistorial.innerHTML = html;
+            }, error => { console.error("Error historial:", error); });
         }
     </script>
 </body>
 </html>
-
-
-    
