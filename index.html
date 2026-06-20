@@ -59,8 +59,26 @@
         .btn-pagar:hover { background-color: #c7124b; }
         #toast { position: fixed; top: 90px; right: 20px; background-color: var(--samsung-black); color: var(--samsung-white); padding: 12px 24px; border-radius: 30px; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateX(150%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 2000; }
         #toast.visible { transform: translateX(0); }
-        .cart-sidebar { position: fixed; top: 0; right: -100%; width: 85%; max-width: 380px; height: 100%; background-color: var(--samsung-white); box-shadow: -5px 0 15px rgba(0,0,0,0.1); z-index: 9999; transition: right 0.3s ease-in-out; display: flex; flex-direction: column; }
-        .cart-sidebar.active { right: 0; }
+                .cart-sidebar { 
+            position: fixed; 
+            top: 15px; /* Lo despega del borde superior */
+            right: -100%; 
+            width: calc(100% - 30px); /* Deja espacio simétrico a los lados */
+            max-width: 360px; 
+            height: calc(100% - 30px); /* Lo despega del borde inferior */
+            background-color: var(--samsung-white); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); /* Sombra más suave y flotante */
+            z-index: 9999; 
+            transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
+            display: flex; 
+            flex-direction: column; 
+            border-radius: 24px; /* Bordes bien redondeados modernos */
+            border: 1px solid rgba(0,0,0,0.05);
+            overflow: hidden; /* Evita que el contenido tape las esquinas redondeadas */
+        }
+        .cart-sidebar.active { 
+            right: 15px; /* Lo frena a 15 píxeles del borde derecho */
+        }
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 9998; display: none; }
         .sidebar-overlay.active { display: block; }
         .cart-sidebar-header { padding: 20px; border-bottom: 1px solid #dadada; display: flex; justify-content: space-between; align-items: center; }
