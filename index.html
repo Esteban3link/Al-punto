@@ -2,6 +2,8 @@
 <html lang="es">
 <head>
     <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Al Punto - Premium Store</title>
@@ -1089,6 +1091,18 @@ const firebaseConfig = {
   appId: "1:885569142373:web:9965535202fda46d0f508c",
   measurementId: "G-4TR7920KYB"
 };
+        const firebaseConfig = {
+  apiKey: "AIzaSy...",
+  authDomain: "alpunto-efd39.firebaseapp.com",
+  projectId: "alpunto-efd39",
+  storageBucket: "alpunto-efd39.firebasestorage.app",
+  messagingSenderId: "885569142373",
+  appId: "1:885569142373:web:9965535202fde46d0f508c"
+};
+
+// >>> AGREGÁ ESTA LÍNEA JUSTO ACÁ ABAJO: <<<
+firebase.initializeApp(firebaseConfig);
+    
         };
 
         // Inicializar Firebase de forma segura
