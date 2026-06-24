@@ -134,36 +134,9 @@
         <button class="category-tab" onclick="filtrar('panificados', this)">Panificados</button>
     </div>
 
-    <main class="store-grid">
-        <article class="product-card" data-category="panificados">
-            <span class="product-badge">Más vendido</span>
-            <div class="product-image-box">🍕</div>
-            <h3>Prepizzas Neolíticas</h3>
-            <p class="specs">Masa madre, fermentación 48hs. Pack x2 unidades.</p>
-            <div class="price">$4.200</div>
-            <button class="btn-buy" onclick="comprar('Prepizzas Neolíticas')">Comprar</button>
-        </article>
-
-        <article class="product-card" data-category="pastas">
-            <span class="product-badge">Nuevo</span>
-            <div class="product-image-box">🥟</div>
-            <h3>Ravioloni Di Agnello</h3>
-            <p class="specs">Relleno de cordero braseado y sardo. Caja de 500g.</p>
-            <div class="price">$6.800</div>
-            <button class="btn-buy" onclick="comprar('Ravioloni Di Agnello')">Comprar</button>
-        </article>
-
-        <article class="product-card" data-category="panificados">
-            <span class="product-badge">Premium</span>
-            <div class="product-image-box">🥮</div>
-            <h3>Tapas de Hojaldre Real</h3>
-            <p class="specs">120 capas de hojaldre de pura manteca para pascualina.</p>
-            <div class="price">$2.400</div>
-            <button class="btn-buy" onclick="comprar('Tapas de Hojaldre Real')">Comprar</button>
-        </article>
-
-    </main>
-
+    <main class="store-grid" id="contenedor-productos">
+    <!-- Los productos de Firebase se cargarán acá automáticamente -->
+</main>
     <div id="toast">Agregado al carrito</div>
 
     <div id="cart-sidebar" class="cart-sidebar">
