@@ -462,22 +462,24 @@ db.collection("productos").onSnapshot((snapshot) => {
             } catch (error) { console.error("Error preferencia MP:", error); }
         }
 
-        function comprar(nombre) {
-            let precio = 4200;
-            if (nombre === 'Ravioloni Di Agnello') precio = 6800;
-            if (nombre === 'Tapas de Hojaldre Real') precio = 2400;
-            const itemExistente = carritoDeProductos.find(p => p.title === nombre);
-            if (itemExistente) itemExistente.quantity++;
-            else carritoDeProductos.push({ title: nombre, quantity: 1, unit_price: precio });
-            actualizarInterfazCarrito();
-            if (toast) {
-                toast.innerHTML = `🛒 Se añadió <strong>${nombre}</strong> al carrito.`;
-                toast.classList.add('visible');
-                clearTimeout(toastTimer);
-                toastTimer = setTimeout(() => { toast.classList.remove('visible'); }, 2500);
-            }
-            activarCheckoutReal();
-        }
+        function comprar(nombre, precio) {
+    const itemExistente = carritoDeProductos.find(p => p.title === nombre);
+    if (itemExistente) {
+        itemExistente.quantity++;
+    } else {
+        carritoDeProductos.push({ title: nombre, quantity: 1, unit_price: precio });
+    }
+    
+    actualizarInterfazCarrito();
+    
+    if (toast) {
+        toast.innerHTML = `🛒 Se añadió <strong>${nombre}</strong> al carrito.`;
+        toast.classList.add('visible');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => { toast.classList.remove('visible'); }, 2500);
+    }
+    activarCheckoutReal();
+}
 
         function toggleSidebar() {
             document.getElementById('cart-sidebar').classList.toggle('active');
