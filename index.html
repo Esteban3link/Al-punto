@@ -324,6 +324,28 @@
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+                // Función para cargar productos desde Firebase de forma dinámica
+db.collection("productos").onSnapshot((snapshot) => {
+    const container = document.getElementById("contenedor-productos");
+    if (!container) return;
+    container.innerHTML = ""; // Limpia los productos anteriores
+
+    snapshot.forEach((doc) => {
+        const prod = doc.data();
+        if (prod.stock) { // Solo muestra si tiene stock verdadero
+            container.innerHTML += `
+                <article class="product-card" data-category="${prod.categoria}">
+                    <div class="product-image-box" style="padding: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 150px;">
+                        <img src="${prod.imagen}" alt="${prod.titulo}" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <h3>${prod.titulo}</h3>
+                    <div class="price">$${prod.precio}</div>
+                    <button class="btn-buy" onclick="comprar('${prod.titulo}', ${prod.precio})">Comprar</button>
+                </article>
+            `;
+        }
+    });
+});
 
         let mp;
         try {
